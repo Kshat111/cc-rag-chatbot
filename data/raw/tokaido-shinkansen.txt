@@ -1,0 +1,63 @@
+# Tokaido Shinkansen
+
+The Tokaido Shinkansen (Japanese: 東海道新幹線; lit. 'Eastern Sea Road new main line') is a Japanese high-speed rail line and part of the nationwide Shinkansen network. Together with the San'yō Shinkansen, it forms a continuous high-speed corridor through the Taiheiyō Belt, also known as the Tōkaidō corridor.
+Opened in 1964 between Tōkyō and Shin-Ōsaka stations, it was the world's first high-speed rail line and remains one of the busiest. Since 1987, it has been operated by the Central Japan Railway Company (JR Central), following its transfer from Japanese National Railways (JNR).
+The line offers three service types: the super-express Nozomi, the express Hikari, and the all-stop Kodama. Many Nozomi and Hikari trains continue onto the San'yō Shinkansen, reaching as far as Hakata station in Fukuoka. All services operate at similar top speeds.
+The Tokaido Shinkansen is among the most frequent high-speed rail services in the world, with up to 17 trains per hour (13 Nozomi, 2 Hikari, and 2 Kodama) over a largely double-track railway. In JFY2019, an average of 378 trains operated daily with an average delay of just 12 seconds.
+In 2000, the Tokaido Shinkansen was designated a joint Historic Mechanical Engineering Landmark and IEEE Milestone by the American Society of Mechanical Engineers and the Institute of Electrical and Electronics Engineers.
+
+## History
+
+The Shinkansen route broadly follows the alignment of the conventional Tōkaidō Main Line, which in turn traces the course of the historic Tōkaidō road, dating back to the 1600s. For centuries, the Tōkaidō was one of Japan's most important transport corridors, as it linked the political and cultural centers of the Kansai region (Kyoto and Osaka) with the Kantō region (Tokyo) via the Tōkai region (Nagoya). The name "Tōkaidō" literally means "eastern sea road", referring to the route running along the Pacific coast of Honshu.
+The Tōkaidō Main Line, completed in stages beginning in the late nineteenth century, was one of Japan's earliest trunk railways and largely followed the alignment of the ancient highway.
+At the end of the 1930s, the government conceived a 1,435 mm (4 ft 8+1⁄2 in) standard gauge dangan ressha (bullet train) along the Tōkaidō corridor continuing to Shimonoseki at the southwestern tip of Honshū. The line was intended to cover the nearly 1,000-kilometre (620 mi) distance in about nine hours and to form the first stage of an East Asian rail network serving Japan's overseas territories. The onset of World War II halted the plan in its early stages, although three tunnels bored for this project were later incorporated into the Shinkansen route.
+By 1955, the Tōkaidō Main Line between Tokyo and Osaka was severely congested. Even after electrification the following year, it remained the busiest line in Japan's railway network, with demand roughly double its capacity. In 1957, a public forum examined "The Possibility of a Three-hour Rail Trip Between Tokyo and Osaka." After substantial debate, Japanese National Railways (JNR) decided to construct a new 1,435 mm (4 ft 8+1⁄2 in) standard gauge line parallel to the existing 1,067 mm (3 ft 6 in) route. JNR president Shinji Sogō lobbied political leaders to support the project, accepting less government funding than the project ultimately required because of its cost and technical complexity.
+The National Diet approved the plan in December 1958, allocating ¥194.8 billion of the ¥300 billion needed for a five-year construction program. Finance minister Eisaku Satō recommended obtaining the remainder from non-governmental sources to insulate the project from political change. Construction began on 20 April 1959 under Sogō and chief engineer Hideo Shima. In 1960, they traveled to the United States seeking a loan from the World Bank. Although they requested US$200 million, they secured $80 million—about 15 percent of the project cost—which could not be used for "experimental technology". Severe cost overruns during construction led both Sogō and Shima to resign. The opening was timed to coincide with the 1964 Summer Olympics in Tokyo.
+When service began, two train types operated: the express Hikari, which covered the Tokyo–Osaka route in four hours, and the all-stops Kodama, which required five hours. A test run on 25 August 1964 simulating a Hikari service was broadcast nationwide by NHK. The line officially opened on 1 October 1964, with Hikari 1 departing Tokyo for Osaka and Hikari 2 operating in the opposite direction. Although the system was designed for speeds up to 210 kilometres per hour (130 mph), JNR limited regular operation to 160 km/h (99 mph) during the opening period. Concerns remained that the track foundations had not fully settled, and testing had revealed issues, due to the rushed construction and testing schedule. Higher speeds were permitted primarily to recover from delays.
+In November 1965, timetables were revised to reduce travel times to 3 hours, 10 minutes for Hikari services and 4 hours for Kodama services, with 210 km/h (130 mph) operation allowed under normal conditions.
+The 1970s proved financially difficult for JNR, as losses on local lines increased. Profits from the Tokaido Shinkansen were used to subsidize those operations, slowing investment and service improvements on the Shinkansen for more than a decade. Labor disputes also diverted management attention from research and development initiatives. Despite these challenges, the World Bank loan taken out in 1959 was fully repaid in 1981.
+Following the 1987 privatization of JNR, the new operator, JR Central, launched a program to raise operating speeds through infrastructure upgrades and new rolling stock. This effort produced the 300 series and the introduction of the super-express Nozomi service on 14 March 1992, reducing travel time to two and a half hours and permitting speeds from 209 km/h (130 mph) to 270 km/h (170 mph).
+Shinkansen platforms at Tokyo's Shinagawa Station opened in October 2003 to reduce congestion at the Tokyo terminal, accompanied by a major timetable revision that expanded the number of Nozomi services, surpassing the number of Hikari services.
+A planned station at Rittō—between Maibara and Kyoto—was canceled in 2007 after political opposition and a Supreme Court of Japan ruling invalidated the city's ¥4.35 billion construction bond.
+A subsequent speed increase, to the current 285 km/h (177 mph) maximum, was announced in 2014 and introduced on 14 March 2015 following the adoption of improved braking technology on the N700 series.
+
+## Rolling stock
+
+N700A series 16-car sets, since July 1, 2007 (owned by JR Central and JR West, modified from original N700 series sets)
+N700A series 16-car sets, since February 8, 2013 (owned by JR Central and JR West)
+N700S series 16-car sets, since July 1, 2020 (owned by JR Central and JR West)
+The last services operated by 700 series sets took place on March 1, 2020, after which all Tokaido Shinkansen services are scheduled to be operated by N700A series or N700S series sets. N700S series sets were then introduced on Tokaido Shinkansen services from July 1, 2020.
+
+### Former rolling stock
+
+0 series 12/16-car sets, October 1, 1964, to September 18, 1999 (owned by JR Central and JR West)
+100 series 16-car sets, October 1, 1985, to September 2003 (owned by JR Central and JR West)
+300 series 16-car sets, March 1992 to March 16, 2012 (owned by JR Central and JR West)
+500 series 16-car sets, November 1997 to February 2010 (owned by JR West)
+700 series 16-car sets,  March 1999 to March 2020 (owned by JR Central and JR West)
+
+### Former non-revenue-earning types
+
+922 (Set T1) (1961 to 1976)
+922 (Set T2) (1974 to 2001)
+923 (Set T4) (Until 29 January 2025)
+
+## Classes and onboard services
+
+All Tokaido Shinkansen trains have two classes of seating: Green Cars (First Class) offer 2+2 configured seating with all-reserved seating. Ordinary cars feature 2+3 configured seating with both reserved and unreserved seating.
+Previously, all trains had an onboard trolley service that sold food and drinks. The ice cream sold by these trolleys was popularly known as "Shinkansen too hard ice cream", which eventually became an official sales name. Trolley service on the Tokaido Shinkansen was discontinued on October 31, 2023, due to falling sales and labor shortages. This was replaced by a mobile order seat service exclusive for Green Car passengers from 1 November 2023. Passengers can scan a QR code on the back of their seat to purchase refreshments, which would then be brought by a cabin attendant.
+In an announcement by JR Central, JR West, and JR Kyushu made on 17 October 2023, the companies stated that all onboard smoking rooms on the Tokaido, San'yo, and Kyushu Shinkansen trains would be discontinued by Q2 2024.
+Since 2020, reservations are required to take large pieces of luggage on Tokaido Shinkansen trains.
+
+## Japan Rail Pass
+
+The Japan Rail Pass is a rail pass available to overseas visitors which allows travel on most major forms of transportation provided by JR Group companies, including the Tokaido Shinkansen. Japan Rail Pass holders can ride Hikari or Kodama services free of charge, and since October 2023, pass holders can also ride the Nozomi service by purchasing a special supplementary ticket. Japan Rail Passes purchased prior to this were not valid on Nozomi services, and passengers were required to purchase a full fare ticket to use this service.
+
+## Ridership
+
+From 1964 to 2012, the Tokaido Shinkansen line carried approximately 5.3 billion passengers. Ridership increased from 61,000 per day in 1964 to 391,000 per day in 2012. By 2016, the route was carrying 452,000 passengers per day on 365 daily services making it one of the busiest high speed railway lines in the world.
+
+## Future stations
+
+It was announced in June 2010 that a new Shinkansen station in Samukawa, Kanagawa Prefecture was under consideration by JR Central. If constructed, the station would open after the Chūō Shinkansen, the new maglev service currently under construction, begins operations.
+Shizuoka Prefecture has long lobbied JR Central for the construction of a station at Shizuoka Airport, which the line passes directly beneath. The railway has so far refused, citing the close distance to the neighbouring Kakegawa and Shizuoka stations. If constructed, travel time from the center of Tokyo to the airport would be comparable to that for Tokyo Narita Airport, enabling it to act as a third hub airport for the capital. As the station would be built underneath an active airport, it is expected to open after the new maglev line.

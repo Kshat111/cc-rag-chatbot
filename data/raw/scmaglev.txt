@@ -1,0 +1,51 @@
+# SCMaglev
+
+The SCMaglev (superconducting maglev, formerly called the MLU) is a magnetic levitation (maglev) railway system developed by Central Japan Railway Company (JR Central) and the Railway Technical Research Institute.
+The SCMaglev uses an electrodynamic suspension (EDS) system for levitation, guidance, and propulsion.
+In development since the 1960s, the SCMaglev system will be used in the Chūō Shinkansen rail line between Tokyo and Nagoya, Japan. The line, currently under construction, is scheduled to open in 2034 (after delays pushing back its original opening date of 2027.) JR Central is also seeking to sell or license the technology to foreign rail companies.
+The L0 Series, a prototype vehicle based on SCMaglev technology, holds the record for fastest crewed rail vehicle with a record speed of 603 km/h (375 mph).
+
+## Technology
+
+The SCMaglev system uses an electrodynamic suspension (EDS) system. The train's bogies have superconducting magnets installed, and the guideways contain two sets of metal coils.
+The current levitation system uses a series of coils wound into a "figure 8" along both walls of the guideway. These coils are cross-connected underneath the track.
+As the train accelerates, the magnetic fields of its superconducting magnets induce a current into these coils due to the magnetic field induction effect. If the train were centered with the coils, the electrical potential would be balanced and no currents would be induced. However, as the train runs on rubber wheels at relatively low speeds, the magnetic fields are positioned below the center of the coils, causing the electrical potential to no longer be balanced. This creates a reactive magnetic field opposing the superconducting magnet's pole (in accordance with Lenz's law), and a pole above that attracts it. Once the train reaches 150 km/h (93 mph), there is sufficient current flowing to lift the train 100 mm (4 in) above the guideway.
+These coils also generate guiding and stabilizing forces. Because they are cross-connected underneath the guideway, if the train moves off-center, currents are induced into the connections that correct its positioning.
+SCMaglev also uses a linear synchronous motor (LSM) propulsion system, which powers a second set of coils in the guideway.
+
+## History
+
+Japanese National Railways (JNR) began research on a linear propulsion railway system in 1962 with the goal of developing a train that could travel between Tokyo and Osaka in one hour. Shortly after Brookhaven National Laboratory patented superconducting magnetic levitation technology in the United States in 1969, JNR announced development of its own superconducting maglev (SCMaglev) system. The railway made its first successful SCMaglev run on a short track at its Railway Technical Research Institute in 1972.
+JR Central plans on exporting the technology, pitching it to potential buyers.
+
+### Miyazaki test track
+
+In 1977, SCMaglev testing moved to a new 7 km test track in Hyūga, Miyazaki. By 1980, the track was modified from a "┴" shape to the "U" shape used today. In April 1987, JNR was privatized, and Central Japan Railway Company (JR Central) took over SCMaglev development.
+In 1989, JR Central decided to build a better testing facility with tunnels, steeper gradients, and curves. After the company moved maglev tests to the new facility, the company's Railway Technical Research Institute began to allow testing of ground effect trains, an alternate technology based on aerodynamic interaction between the train and the ground, at the Miyazaki Test Track in 1999.
+
+### Yamanashi maglev test line
+
+Construction of the Yamanashi Maglev Test Line began in 1990. The initial 18.4 km (11.4 mi) “priority section” in Tsuru, Yamanashi, opened in 1997, with MLX01 trains undergoing testing until the fall of 2011. At that point, the facility was closed to extend the line to 42.8 km (26.6 mi) and upgrade it to commercial specifications.
+Since 1997, the Chuo Shinkansen has amassed over 2,044,000 miles of test runs, averaging roughly 2,000 kilometers per day. In one record-setting day, the SCMaglev traveled approximately 2,525 miles (4,062 km)—far exceeding the expected daily mileage during routine operation.
+
+## Commercial use
+
+### Japan
+
+In 2009, Japan's Ministry of Land, Infrastructure, Transport and Tourism decided that the SCMaglev system was ready for commercial operation. In 2011, the ministry gave JR Central permission to operate the SCMaglev system on their planned Chūō Shinkansen linking Tokyo and Nagoya by 2034, and to Osaka by 2037. Construction is currently underway.
+
+### United States
+
+Since 2010, JR Central has promoted the SCMaglev system in international markets, particularly the Northeast Corridor of the United States, as the Northeast Maglev. In 2013, Prime Minister Shinzō Abe met with U.S. President Barack Obama and offered to provide the first portion of the SC Maglev track free, a distance of about 40 miles (64 km). In 2016, the Federal Railroad Administration awarded $27.8 million to the Maryland Department of Transportation to prepare preliminary engineering and NEPA analysis for an SCMaglev train between Baltimore, Maryland, and Washington, D.C.
+
+### Australia
+
+In late 2015, JR Central, Mitsui, and General Electric in Australia formed a joint venture named Consolidated Land and Rail Australia to provide a commercial funding model using private investors that could build the SC Maglev (linking Sydney, Canberra, and Melbourne), create eight new self-sustaining inland cities linked to the high-speed connection, and contribute to the community.
+
+## Vehicles
+
+The following table is based on data published by the Railway Technical Research Institute.
+
+## Records
+
+The following tables are based on data published by the Railway Technical Research Institute.

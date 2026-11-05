@@ -1,0 +1,19 @@
+[project]
+name = "rag-chatbot"
+version = "0.1.0"
+description = "Retrieval-augmented chatbot over a small document set, with hybrid (dense + BM25) search."
+readme = "README.md"
+requires-python = ">=3.11"
+# Runtime deps are intentionally empty until each one is approved
+# (see CLAUDE.md and docs/DECISIONS.md). Add with `uv add <pkg>`.
+dependencies = []
+
+[dependency-groups]
+dev = []
+
+[build-system]
+requires = ["uv_build>=0.8,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "ragbot"

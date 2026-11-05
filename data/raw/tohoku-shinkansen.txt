@@ -1,0 +1,94 @@
+# Tōhoku Shinkansen
+
+The Tōhoku Shinkansen (Japanese: 東北新幹線; lit. 'Northeast new main line') is a Japanese high-speed rail line and part of the nationwide Shinkansen network. Operated by the East Japan Railway Company (JR East), it runs along the Tōhoku region of Japan's main island, Honshu. It links Tokyo in the south to Aomori in the north, with stops in major cities such as Morioka, Koriyama, Fukushima, Hachinohe, and Sendai. With a route length of 674.9 kilometers (419.4 mi), it is Japan's longest Shinkansen line and supports the network's highest operating speed, reaching 320 kilometers per hour (200 mph) on a 387.5-kilometer (241 mi) section between Utsunomiya and Morioka.
+The line opened in stages beginning in 1982 between Ōmiya and Morioka, with the final section to Shin-Aomori completed in 2010. It connects with the Hokkaido Shinkansen, which opened in 2016 and extends services through the Seikan Tunnel to Shin-Hakodate-Hokuto. The Tōhoku Shinkansen also has two mini-Shinkansen branches, the Yamagata Shinkansen and Akita Shinkansen, lines operating at conventional speeds, but with widened track to permit through-running by Shinkansen trainsets. Ongoing work aims to further increase operating speeds to 360 kilometres per hour (220 mph) in the future.
+Four services currently operate on the route: the express Hayabusa, the limited-stop Yamabiko, and the all-stop Hayate and Nasuno. The Hayabusa is the only train that operates the length of the corridor, with the Hayabusa and Hayate providing through service onto the Hokkaido Shinkansen. As of 2021, the fastest travel times between Tokyo and Shin-Aomori are on the Hayabusa service, at 2 hours and 58 minutes. The mini-Shinkansen also provide through service to and from Tokyo via the Tōhoku Shinkansen; typically, Komachi and Tsubasa trains are coupled to Hayabusa and Yamabiko trains at Tokyo and are decoupled at Morioka and Fukushima, respectively, where they continue on to their mini-Shinkansen lines.
+
+## Services
+
+The Tōhoku Shinkansen operates with four different services:
+
+Hayabusa: Tokyo – Shin-Aomori express service. Short turn trains starting or ending at Morioka stop at all or selected stations between Furukawa and Shin-Hanamaki, while trains starting or ending at Shin-Aomori or Shin-Hakodate-Hokuto pass these stations.
+Yamabiko: Tokyo – Morioka limited-stop service. Trains stop at selected stations between Tokyo and Sendai, and at all stations between Sendai and Morioka. One weekday service is coupled with a freight-only train.
+Hayate: Morioka – Shin-Aomori all-stops service, except Iwate-Numakunai.
+Nasuno: Tokyo – Kōriyama all-stops service.
+Through trains on the Akita and Yamagata mini-Shinkansen lines also operate over Tōhoku Shinkansen tracks:
+
+Tsubasa: Tokyo – Shinjō limited-stop service. Typically coupled to Yamabiko trains between Tokyo and Fukushima, then continues onto the Yamagata Shinkansen, stopping at all stations to Shinjō.
+Komachi: Tokyo – Akita limited-stop service. Typically coupled to Hayabusa trains between Tokyo and Morioka, then continues onto the Akita Shinkansen, stopping at all stations to Akita.
+One service has been discontinued:
+
+Aoba: Tokyo – Sendai all-stops service, June 1982 – October 1997 (consolidated with Nasuno)
+
+## Operating speeds
+
+As of March 2021, maximum operating speeds are 110 km/h (68 mph) between Tokyo and Ueno, 130 km/h (81 mph) between Ueno and Ōmiya, 275 km/h (171 mph) between Ōmiya and Utsunomiya, 320 km/h (200 mph) between Utsunomiya and Morioka, and 260 km/h (160 mph) between Morioka and Shin-Aomori.
+Work is under way to raise the maximum speed on the section between Morioka and Shin-Aomori to 320 km/h (200 mph), primarily through the installation of improved trackside noise barriers. Construction began in October 2020 and is expected to take about seven years to complete.
+On 30 October 2012, JR East announced plans to pursue research and development aimed at increasing maximum operating speeds on the Tōhoku Shinkansen to 360 km/h (220 mph) after 2030. Operation at this speed is dependent on the successful implementation of noise-reduction and vibration-control technologies evaluated using the ALFA-X experimental train.
+Although these technologies have progressed, the introduction of commercial service at 360 km/h (220 mph) has been postponed following delays to the extension of the Hokkaido Shinkansen to Sapporo, now scheduled for the late 2030s. As a result, the E10 series Shinkansen—planned to enter service in fiscal 2030 and developed based on ALFA-X testing—is currently expected to operate at a maximum speed of 320 km/h (200 mph).
+
+## Rolling stock
+
+As of March 2024, the following types are used on Tōhoku Shinkansen services:
+
+E2 series: Yamabiko / Nasuno services (since 1997, retirement underway)
+E5/H5 series: Hayabusa / Hayate / Yamabiko / Nasuno services (since 2011)
+E6 series: Komachi services to/from Akita (since 2013)
+E8 series: Tsubasa services to/from Shinjo (since 2024)
+
+### Planned rolling stock
+
+E10 series (planned for fiscal 2030)
+
+### Former rolling stock
+
+200 series: Yamabiko / Nasuno / Aoba services (June 1982 – November 2011)
+400 series: Tsubasa services (July 1992 – April 2010)
+E1 series: Max Yamabiko / Max Aoba services (July 1994 – December 1999)
+E2 series: Hayate services (December 2002 – March 2019)
+E3 series: Komachi / Tsubasa services (March 1997 – December 2025)
+Hakobyun freight services (since 23 March 2026)
+E4 series: Max Yamabiko / Max Nasuno services (December 1997 – September 2012)
+
+### Non-revenue-earning types
+
+East i (E926)
+
+## History
+
+Planning for what became the Tōhoku and Jōetsu Shinkansen progressed in parallel. Following the opening of the Tōkaidō Shinkansen, and amid construction of the San'yō Shinkansen, the National Diet passed the Nationwide Shinkansen Development Act in May 1970, which set out a framework for a nationwide high-speed rail network. That led to the Japanese government formally approved both the Tōhoku and Jōetsu routes in 1971, with construction beginning on 28 November.
+However, the work advanced at a time when noise and vibration from the Tōkaidō and San'yō lines had become a growing public concern. Opposition developed along parts of the planned Tōhoku and Jōetsu corridor, especially in Saitama Prefecture and northern Tokyo (Kita Ward), where local residents and civic groups organized protests and administrative challenges that slowed construction. In response, Japanese National Railways (JNR) suspended work between Tokyo and Ōmiya and prepared to open the lines provisionally at Ōmiya while negotiations continued.
+Through the late 1970s, a compromise plan was negotiated between JNR, the national government, and local authorities. A rail connection between Saitama and central Tokyo, long identified as a regional need, became a focal point of the settlement. JNR agreed to establish the connection as the Saikyō Line, along with building the New Shuttle to serve developing areas around Saitama Prefecture. To further address community concerns over noise and vibration JNR committed to lowering operating speeds and to minimize land acquisitions by adopting a more constrained alignment approaching Tokyo, which would further reduce speeds. JNR also agreed to add a stop at Ueno Station, which was not included in the original plan. With these conditions in place, construction between Tokyo and Ōmiya begun.
+The first section of the Tōhoku Shinkansen, between Ōmiya and Morioka, opened on 23 June 1982, followed by the Jōetsu Shinkansen on 15 November. During this period, passengers on the Tōhoku and Jōetsu lines coming from or bound for central Tokyo used the "Shinkansen Relay", a non-stop conventional express service operating between Ōmiya and Ueno. The line was extended south to Ueno on 14 March 1985, allowing direct transfers to the urban rail network. Meanwhile, in April 1987, JNR was divided and privatized, and operation of the line was transferred to the East Japan Railway Company (JR East).
+The final link into Tokyo Station opened on 20 June 1991. Later that year, as part of the privatization of JNR, the facilities of the Tōhoku and Jōetsu Shinkansen were transferred to JR East.
+
+### Extensions
+
+The reach of the Tōhoku Shinkansen was expanded through the introduction of two mini-Shinkansen lines, created by converting existing 1,067 mm (3 ft 6 in) narrow gauge lines to 1,435 mm (4 ft 8+1⁄2 in) standard gauge to allow through operation of Shinkansen services. While the track gauge is widened, the original loading gauge is retained, necessitating the use of specially designed Shinkansen rolling stock with a narrower cross-section, leading to the "mini-Shinkansen" designation. Unlike purpose-built high-speed Shinkansen lines, mini-Shinkansen lines are constrained by their legacy infrastructure to maximum operating speeds of up to 130 kilometres per hour (81 mph). Two mini-Shinkansen routes were constructed: the Yamagata Shinkansen, which opened in 1992, and the Akita Shinkansen, which opened in 1997.
+Northward extensions of the main Shinkansen line proceeded in stages. The section from Morioka to Hachinohe opened in December 2002, followed by the extension to Shin-Aomori on 4 December 2010.
+Beyond Shin-Aomori, the line and some services continue as the Hokkaido Shinkansen to Shin-Hakodate-Hokuto, which opened on 26 March 2016 via the Seikan Tunnel, the world's longest undersea railway tunnel. A further extension to Sapporo is planned, with opening currently scheduled for 2039.
+On 5 March 2011, Hayabusa services began operating between Tokyo and Shin-Aomori at speeds of up to 300 km/h (190 mph) using new E5 series trainsets. Following the 2011 Tōhoku earthquake and tsunami on 11 March, maximum speeds were temporarily reduced to 275 km/h (171 mph). In 2013, the maximum operating speed was increased to 320 km/h (200 mph).
+Because the route crosses mountainous terrain, it makes extensive use of long tunnels. The 25.8-kilometre (16 mi) Iwate-Ichinohe Tunnel, completed in 2000, was briefly the world's longest land railway tunnel, before being surpassed in 2005 by the 26.5-kilometre (16.5 mi) Hakkōda Tunnel on the extension toward Aomori. Both were later exceeded by Switzerland's Lötschberg Base Tunnel in 2007 and the Gotthard Base Tunnel in 2010.
+JR East began freight-only service on the line in March 2026 using a modified E3-series train with seven cars, with one frequency per weekday between Morioka and Tokyo. This was the first freight-only service in Shinkansen history, although the JR group had been carrying cargo on passenger Shinkansen trains since 2021.
+
+### 2011 Tōhoku earthquake and tsunami
+
+On the afternoon of 11 March 2011, services on the Tohoku Shinkansen were suspended as a result of the 2011 Tōhoku earthquake and tsunami. JR East estimated that around 1,100 repairs would be required for the line between Omiya and Iwate-Numakunai, ranging from collapsed station roofs to bent power pylons. Limited service on the line was restored in segments: Tokyo to Nasushiobara was re-opened on 15 March, and Morioka to Shin-Aomori was re-opened on 22 March.  The line between Morioka and Ichinoseki re-opened on 7 April, Nasushiobara and Fukushima on 12 April, and the rest of the line on or around 30 April, although not at full speed or a full schedule.  The trains returned to full-speed operations on 23 September 2011.
+
+### 2021 Fukushima earthquake
+
+A magnitude 7.1 earthquake struck the Tohoku area approximately 46 km (29 mi) east of Namie on the evening of 13 February 2021. Following the quake, infrastructure damage was discovered between Shin-Shirakawa and Furukawa stations. JR East closed the Tohoku Shinkansen between Nasushiobara and Morioka. The section between Ichinoseki and Morioka re-opened on 16 February, Sendai and Ichinoseki on 22 February, and the remaining section between Nasushiobara and Sendai on 24 February. Trains operated at 80% the usual timetable with top speeds reduced until 26 March, when repairs were completed and the normal timetable was restored.
+
+### 2025 uncoupling accident
+
+On 6 March 2025, at around 11:30 AM, the Hayabusa-Komachi 21 train, composed of the H5 and E6 series Shinkansen, uncoupled while travelling between Ueno and Omiya stations at around 60 km/h . Both trains made an emergency stop near Nishi-Nippori Station and no one among 642 passengers was injured. According to a JR East press conference, the problem came from the Komachi side. On that day, 111 Shinkansen trains were cancelled and 166 were delayed, affecting more than 150,000 people. The Tohoku Shinkansen was not the only Shinkansen to be affected, as Joetsu and Hokuriku Shinkansen services were also delayed. Coupled operations with Yamagata and Akita Shinkansen were cancelled. Passengers were guided to interchange at Fukushima station for Yamagata Shinkansen and Morioka station for Akita Shinkansen. It brought inconvenience for passengers, as interchanges require transferring from Shinkansen to conventional line platforms, with stations more congested than usual. A similar accident happened in September 2024, when Hayabusa-Komachi train travelling between Furukawa and Sendai stations uncoupled while travelling at more than 300 km/h. Train inspections and special measures were taken.
+
+## Special event train services
+
+### 25th anniversary
+
+On 23 June 2007, 10-car set K47 was used for a special Yamabiko 931 service from Omiya to Morioka to mark the 25th anniversary of the opening of the Tohoku Shinkansen.
+
+### 30th anniversary
+
+On 23 June 2012, 10-car set K47 was used for a special Yamabiko 235 service from Omiya to Morioka to mark the 30th anniversary of the opening of the Tohoku Shinkansen.

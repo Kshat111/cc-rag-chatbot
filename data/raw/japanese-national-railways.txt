@@ -1,0 +1,98 @@
+# Japanese National Railways
+
+The Japanese National Railways (日本国有鉄道, Nihon Kokuyū Tetsudō or Nippon Kokuyū Tetsudō), abbreviated JNR or Kokutetsu (国鉄), was the government-owned entity that operated Japan's national railway network from 1949 to 1987.
+
+## Network
+
+### Railways
+
+As of June 1, 1949, the date of establishment of JNR, it operated 19,756.8 km (12,276.3 mi) of narrow gauge (1,067 mm (3 ft 6 in)) railways in all 46 prefectures of Japan. This figure expanded to 21,421.1 km (13,310.5 mi) in 1981 (excluding Shinkansen), but later reduced to 19,633.6 km (12,199.8 mi) as of March 31, 1987, the last day of JNR.
+JNR operated both passenger and freight services.
+
+#### Shinkansen
+
+Shinkansen, the world's first high-speed railway was debuted by JNR in 1964. By the end of JNR in 1987, four lines had been constructed:
+
+Tōkaidō Shinkansen
+515.4 km (320.3 mi), completed in 1964
+Sanyō Shinkansen
+553.7 km (344.1 mi), completed in 1975
+Tōhoku Shinkansen
+492.9 km (306.3 mi), as of 1987
+Jōetsu Shinkansen
+269.5 km (167.5 mi), completed in 1982
+
+### Buses
+
+JNR operated bus lines as feeders, supplements or substitutions of railways. The JR Bus companies are the successors of the bus operation of JNR.
+
+### Ships
+
+JNR operated ferries to connect railway networks separated by sea or to meet other local demands:
+
+Kanmon Ferry (discontinued in 1964)
+Shimonoseki Station (Shimonoseki, Yamaguchi) – Mojikō Station (Kitakyūshū, Fukuoka)
+Miyajima Ferry
+Miyajimaguchi Station (Ōno, Hiroshima) – Miyajima Station (Miyajima, Hiroshima)
+Nihori Ferry (discontinued in 1982)
+Nigata Station (Kure, Hiroshima) – Horie Station (Matsuyama, Ehime)
+
+Ōshima Ferry (discontinued in 1976)
+Ōbatake Station (Yanai, Yamaguchi) – Komatsukō Station (Suō-Ōshima, Yamaguchi)
+Seikan Ferry
+Aomori Station (Aomori, Aomori) – Hakodate Station (Hakodate, Hokkaidō)
+Ukō Ferry
+Uno Station (Tamano, Okayama) – Takamatsu Station (Takamatsu, Kagawa)
+Out of three routes assigned to JR companies in 1987, only the Miyajima Ferry remains active as of 2023.
+
+## Unions
+
+A number of unions represented workers at JNR, including the National Railway Workers' Union (Kokuro), the National Railway Locomotive Engineers' Union (Doro), and Doro-Chiba, a break-away group from Doro.
+
+## History
+
+The term Kokuyū Tetsudō "state-owned railway" originally referred to a network of railway lines operated by 17 private companies that were  nationalized following the Railway Nationalization Act of 1906 and placed under the control of the Railway Institute.  Later, the Ministry of Railways and the Ministry of Transportation and Communications took over control of the network. The ministries used the name Japanese Government Railways (JGR) to refer their network in English. During World War II, many JGR lines were dismantled to supply steel for the war effort.
+On June 1, 1949, by a directive of the U.S. General HQ in Tokyo, JGR was reorganized into Japanese National Railways, a state-owned public corporation. JNR enjoyed many successes, including the inauguration of high-speed Shinkansen service along the Tōkaidō Shinkansen line on October 1, 1964. However, JNR was not a state-run corporation; its accounting was independent from the national budget. Rural sections without enough passengers began to press its management, pulling it further and further into debt. In 1983, JNR started to close its unprofitable 83 local lines (the closure continued three years after the privatization).
+By 1987, JNR's debt was over ¥27 trillion ($442 billion at 2021 exchange rates) and the company was spending ¥147 for every ¥100 earned.
+Prime Minister Yasuhiro Nakasone, an avowed advocate of privatization, strongly supported breaking up JNR and in August 1982 launched the JNR Reform Commission to officially begin the process. By an act of the Diet of Japan, on April 1, 1987, JNR was privatized and divided into seven  railway companies, six passenger and one freight, collectively called the Japan Railways Group or JR Group. Long-term liabilities of JNR were taken over by the Japanese National Railway Settlement Corporation. That corporation was subsequently disbanded on October 22, 1998, and its remaining debts were transferred to the national budget's general accounting and then to the Japan Railway Construction, Transport and Technology Agency.  By this time the debt has risen to ¥30 trillion ($491 billion in 2021 dollars).
+
+### JNR dismissal lawsuit
+
+Many lawsuits and labor commission cases were filed over the decades from the privatization in 1987.   Kokuro and the National Railway Locomotive Engineers' Union (Zendoro), both prominent Japanese railway unions, represented a number of the JNR workers.
+Lists of workers to be employed by the new organizations were drawn up by JNR and given to the JR companies. There was substantial pressure on union members to leave their unions, and within a year, the membership of the National Railway Workers' Union (Kokuro) fell from 200,000 to 44,000. Workers who had supported the privatization, or those who left Kokuro, were hired at substantially higher rates than Kokuro members.
+There was a government pledge that no one would be "thrown out onto the street", and so unhired workers were classified as "needing to be employed" and were transferred to the JNR Settlement Corporation, where they could be assigned for up to three years.  Around 7,600 workers were transferred in this way, and around 2,000 of them were hired by JR firms, and 3,000 found work elsewhere. Mitomu Yamaguchi, a former JNR employee from Tosu in Saga prefecture who had been transferred to the JNR Settlement Corporation, later stated that their help in finding work consisted of giving him photocopies of recruitment ads from newspapers.  This period ended in April 1990, and 1,047 were dismissed. This included 64 Zendoro members and 966 Kokuro members.
+Twenty-three years after the original privatization, on June 28, 2010, the Supreme Court settled the dispute between the workers and the Japan Railway Construction, Transport and Technology Agency, the successor body to the JNR Settlement Corporation. The agency said it would pay 20 billion yen, approximately 22 million yen per worker, to 904 plaintiffs. However, as the workers were not reinstated, it was not a full settlement.
+
+### Baseball team
+
+Between 1950 and 1965, JNR indirectly owned a professional baseball team named Kokutetsu Swallows (国鉄スワローズ, Kokutetsu Suwarōzu). Swallow was a symbol of JNR as it is the English equivalent of the Japanese Tsubame, the name of a deluxe train operated by JNR in the 1950s. JNR sold the team to the Sankei Shinbun in 1965, and called the Atoms from 1966 to 1973; the team is now the Tokyo Yakult Swallows and has been owned by the Yakult company since 1970.
+
+## Accidents and criminal incidents
+
+### Accidents
+
+JNR as a public corporation (from 1949 to 1987) experienced five major accidents (including two shipwrecks of railway ferries) with casualties more than 100:
+
+Sakuragichō train fire
+A train fire at Sakuragichō Station in Yokohama on April 24, 1951, killed 106.
+Tōya Maru disaster
+A Seikan ferryboat sank off Hakodate killing 1,155 in a typhoon storm on September 26, 1954.
+Shiun Maru disaster
+An Ukō ferryboat collided with a fellow boat in a dense fog and sank killing 168 on May 11, 1955.
+Mikawashima train crash
+A three-train collision near Mikawashima Station in Tokyo on May 3, 1962, killed 160.
+Tsurumi rail accident
+A three-train collision near Tsurumi Station in Yokohama on November 9, 1963, killed 161.
+
+### Criminal incidents
+
+In its very early days as a public corporation, JNR experienced a series of mysterious incidents as follows. Although the police at that time treated them as terrorism by the communists, doubts have been raised as to the validity of this conclusion.
+
+Shimoyama incident
+The dismembered body of JNR President Sadanori Shimoyama was found on a railway track on July 5, 1949. The possibility of non-criminal suicide has not been ruled out.
+Mitaka incident
+A train running without crew crashed into passengers and killed six people on July 15, 1949.
+Matsukawa derailment
+A train was derailed because of destroyed track and three crew were killed on August 17, 1949.
+In later years, JNR was a target of radical leftists. On October 21, 1968, groups of extremist students celebrating "International Antiwar Day" occupied and vandalized Shinjuku Station in Tokyo. They criticized JNR's collaboration in the Vietnam War by operating freight trains carrying jet fuel for U.S. military use. On November 29, 1985, militants supporting a radical sect of JNR's labor union objecting to the privatization of JNR damaged signal cables at 33 points around Tokyo and Osaka to halt thousands of commuter trains and then set fire to Asakusabashi Station in Tokyo.
+As such, relationships with labor unions were always a difficult problem for JNR. Since public workers were prohibited to strike, they carried out "work-to-rule protests" that caused trains to be delayed. On March 13, 1973, train delays caused by such protests resulted in a riot of angered passengers at Ageo Station in Saitama Prefecture. From November 26, 1975, to December 3, 1975, major labor unions of JNR conducted an eight-day-long illegal "strike for the right to strike", which resulted in a total defeat of the unions.
