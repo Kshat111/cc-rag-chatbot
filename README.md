@@ -8,36 +8,45 @@ using chat history before retrieval.
 
 ## Install
 
-Requires [uv](https://docs.astral.sh/uv/).
+Requires [uv](https://docs.astral.sh/uv/) (it installs the right Python itself).
 
 ```bash
 git clone <repo-url> rag-chatbot
 cd rag-chatbot
 uv sync
-cp .env.example .env   # then fill in values locally
 ```
+
+The 15 Wikipedia articles are already committed in `data/raw/`, so no fetch is needed.
+The first index build downloads the embedding model (BAAI/bge-small-en-v1.5, ~67 MB) from
+huggingface.co into `data/models/` and takes about 40 s on a laptop CPU; later runs are offline.
 
 ## Usage
 
 ```bash
-# 1. Download the Wikipedia corpus into data/raw/ (titles live in src/ragbot/config.py)
-uv run python scripts/fetch_corpus.py --check   # resolve titles only, writes nothing
-uv run python scripts/fetch_corpus.py           # fetch; re-runs overwrite
-
-# 2. Build the dense + BM25 indexes into data/index/
+# 1. Build the dense + BM25 data into data/index/ (BM25 itself is rebuilt in memory at load)
 uv run python scripts/build_index.py
 
-# 3. Ask a question from the CLI (needs an LLM, see "Choosing an LLM"; without one it prints the retrieved passages)
+# 2. Ask a question from the CLI. Needs an LLM (see "Choosing an LLM" below);
+#    without one it still runs and prints the retrieved passages.
 uv run python scripts/ask.py "your question"
-uv run python scripts/ask.py                      # interactive chat with history
+uv run python scripts/ask.py                      # interactive chat with history (/reset, /quit)
 uv run python scripts/ask_retrieval.py "N700S" --method all   # retrieval only, no LLM
 
-# 4. Run the evaluation set (eval/questions.jsonl), results go to eval/results/
+# 3. Launch the UI, then open http://127.0.0.1:7860
+uv run python -m ragbot.ui
+
+# 4. Evaluate retrieval (eval/questions.jsonl): recall@k and MRR, saved to eval/results/
 uv run python scripts/evaluate.py
 
-# 5. Launch the UI, then open http://127.0.0.1:7860
-uv run python -m ragbot.ui
+# 5. Unit tests (no model download, no network)
+uv run --with pytest pytest -q
+
+# Optional: re-download the corpus (overwrites data/raw; the index must then be rebuilt)
+uv run python scripts/fetch_corpus.py
 ```
+
+If the index is missing or out of date (corpus, chunk settings or model changed), the tools stop
+and tell you to run `scripts/build_index.py`.
 
 ## Choosing an LLM
 

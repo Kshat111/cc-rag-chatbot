@@ -76,10 +76,16 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
     **To do with a key:** the 3-turn conversation, one unanswerable refusal, one planted-injection
     test, and a real out-of-context answer (needed for the presentation).
 
+- **Stage 8: Gradio UI + README (D-014).** `ragbot.ui` (chat, search query, cited sources with revision
+  links, refusal/invalid-citation flags, per-session 2 s rate limit); `gradio` 6.31.0 added.
+  112 tests pass. **README verified from a clean clone** (scratchpad, committed state): `uv sync`, build
+  (248 chunks, max 510 tokens, 37 s), ask (no key), ask_retrieval, evaluate (same table as before), UI HTTP 200, tests.
+  Not done: UI looked at in a real browser; `pytest` is not a declared dev dependency (README uses `uv run --with pytest`).
+
 ## In progress
 - Compressed plan for the deadline (agreed 2026-11-06), one row at a time, commit + tag after each:
   1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. ~~Stages 5-6~~ built, live run pending a key.
-  4. Stage 8: Gradio UI (approved) + README from a clean clone. 5. Docs: THREAT, FAILURE, DATA
+  4. ~~Stage 8~~ done (UI + README clean-clone check). 5. Docs: THREAT, FAILURE, DATA
   history section, HANDOVER. 6. User: DEFENSE.md, slides.
 - Cut for time: table fetching (D-002 revisit), overlap experiments, LLM-judge faithfulness.
 - Commits: never add a Co-Authored-By / AI attribution line (user rule, 2026-11-06).
@@ -105,7 +111,7 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
   the exponent rule with `<sup>` rendering (D-005 "revisit if"); fill q005/q006 expected answers;
   re-check FAILURE.md F1, F2, F4; chunk ids in FAILURE.md will shift.
 - Decide whether to rebalance the corpus (missing JR Hokkaido/Shikoku/Kyushu, Kyushu/Hokkaido Shinkansen; Chūō Shinkansen vs SCMaglev overlap).
-- **Next row:** Stage 8: Gradio UI (`ui.py`) + README tested from a clean clone. Then live LLM demos (see above).
+- **Next:** live LLM runs with a key (3-turn demo, refusal, planted injection, a real out-of-context answer), then docs: DEFENSE.md (user, own words), slides. Optional: push to GitHub, F14 investigation, SOP for q025.
 - Experiments planned in D-004: size 128/256/512 (384 optional); overlap 0/32/64/128 at best
   size; heading prepend on/off; query instruction on/off; fixed-size baseline. Fixed overlap 64
   is 50% of a 128-token chunk and 12.5% of 512, so the size experiment is not "size only".
