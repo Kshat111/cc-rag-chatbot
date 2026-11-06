@@ -29,3 +29,9 @@ Rejected options, and the condition under which to reconsider them.
 | D-009 | Plain RRF | No dial for the dense vs BM25 experiments | Never (α = 0.5 already equals it) |
 | D-010 | Hand-written gold chunk ids | Break on every re-chunk | Never at this corpus size |
 | D-010 | LLM judge for retrieval relevance | Costs a key, can be wrong, not needed for recall@k | Gold quotes stop being findable (heavy paraphrase) |
+| D-011 | Official `openai` SDK | A dependency for ~60 lines of HTTP | Streaming or tool calling is needed |
+| D-011 | Per-provider SDKs / LiteLLM | Several dependencies, heavier install | A provider that is not OpenAI-compatible is required |
+| D-012 | Raw history as the retrieval query | A topic switch retrieves the old topic | Never with an LLM available (use it if there is no LLM) |
+| D-012 | Running summary memory | Extra component to keep correct | Conversations regularly exceed 5 turns |
+| D-013 | No grounding instruction | Model answers from its own knowledge | Never |
+| D-013 | Score threshold before the LLM (refuse early) | Needs calibration on the eval; none done yet | A real run answers from weak retrieval |

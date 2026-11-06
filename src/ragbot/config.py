@@ -100,8 +100,51 @@ EMBED_CACHE_DIR = ROOT_DIR / "data" / "models"  # fastembed defaults to the OS t
 EMBED_PROBE_TEXT = "The Tokaido Shinkansen opened in 1964 between Tokyo and Osaka."
 EMBED_PROBE_MIN_COSINE = 0.999
 
-LLM_MODEL = "TODO"  # TODO(decision)
-REWRITE_MODEL = LLM_MODEL  # model used for follow-up query rewriting
+# LLM (D-011). Any OpenAI-compatible /chat/completions endpoint works: pick a
+# provider with RAGBOT_LLM_PROVIDER, or override pieces with RAGBOT_LLM_BASE_URL
+# / RAGBOT_LLM_MODEL / RAGBOT_LLM_API_KEY_ENV (env var that holds the key).
+LLM_PROVIDERS = {
+    "openai": {"base_url": "https://api.openai.com/v1", "model": "gpt-4o-mini", "key_env": "OPENAI_API_KEY"},
+    "ollama": {"base_url": "http://localhost:11434/v1", "model": "llama3.2", "key_env": None},  # local, no key
+    "groq": {"base_url": "https://api.groq.com/openai/v1", "model": "llama-3.3-70b-versatile", "key_env": "GROQ_API_KEY"},
+    "openrouter": {"base_url": "https://openrouter.ai/api/v1", "model": "openai/gpt-4o-mini", "key_env": "OPENROUTER_API_KEY"},
+}
+LLM_PROVIDER = os.environ.get("RAGBOT_LLM_PROVIDER", "openai")
+LLM_TIMEOUT_S = 60
+LLM_MAX_RETRIES = 3  # on HTTP 429/5xx and network errors; backoff 2s, 4s, 8s
+LLM_MAX_ANSWER_TOKENS = 500
+LLM_MAX_REWRITE_TOKENS = 80
+TEMPERATURE = 0.0
+
+
+def llm_settings(provider=None):
+    """Resolve provider -> (base_url, model, key_env). Env overrides win."""
+    name = provider or LLM_PROVIDER
+    if name not in LLM_PROVIDERS:
+        raise ValueError(f"unknown LLM provider {name!r}; choose from {sorted(LLM_PROVIDERS)}")
+    p = LLM_PROVIDERS[name]
+    return {
+        "provider": name,
+        "base_url": os.environ.get("RAGBOT_LLM_BASE_URL", p["base_url"]).rstrip("/"),
+        "model": os.environ.get("RAGBOT_LLM_MODEL", p["model"]),
+        "key_env": os.environ.get("RAGBOT_LLM_API_KEY_ENV", p["key_env"]),
+    }
+
+
+def llm_api_key(provider=None):
+    """The key from the environment, or None (keyless local servers, or not set)."""
+    key_env = llm_settings(provider)["key_env"]
+    return os.environ.get(key_env) if key_env else None
+
+
+# --- Query pipeline (D-012, D-013) ---
+MAX_QUERY_CHARS = 500  # longer questions are rejected (cost/abuse limit)
+MAX_HISTORY_TURNS = 5  # past question/answer pairs sent to the rewriter and the LLM
+MAX_HISTORY_CHARS = 4000  # oldest turns are dropped first beyond this
+CONTEXT_TOKEN_BUDGET = 3000  # real bge tokens of retrieved chunks put in the prompt
+RETRIEVAL_METHOD = "hybrid"  # method used by the pipeline: dense | bm25 | hybrid
+REFUSAL_TEXT = "I don't know based on the provided documents."
+NO_LLM_NOTICE = "No LLM is configured ({hint}); showing the retrieved passages instead."
 
 # --- Index (D-007) ---
 # Which chunk field each index reads: "embed_text" (heading path + text) or "text".
@@ -117,19 +160,7 @@ BM25_INDEX_FIELD = "embed_text"  # "embed_text" (heading path + text) or "text"
 BM25_K1 = 1.5  # term-frequency saturation
 BM25_B = 0.75  # length normalisation (0 = none, 1 = full)
 # Weighted reciprocal rank fusion: alpha/(RRF_K + rank_dense) + (1 - alpha)/(RRF_K + rank_bm25)
-HYBRID_ALPHA = 0.5  # 1.0 = dense order only, 0.0 = BM25 order only
+HYBRID_ALPHA = 0.75  # 0.5 -> 0.75 after the first eval (D-009 note); 1.0 = dense order only, 0.0 = BM25 order only
 RRF_K = 60  # standard constant (Cormack et al., 2009)
 HYBRID_CANDIDATES = 50  # top-n taken from each method before fusing
 RETRIEVAL_METHODS = ("dense", "bm25", "hybrid")
-
-# --- Generation ---
-TEMPERATURE = 0.0
-MAX_HISTORY_TURNS = 5
-
-# --- Secrets ---
-# Read from the environment only; never hardcode. Name must match .env.example.
-LLM_API_KEY_ENV = "LLM_API_KEY"
-
-
-def llm_api_key() -> str | None:
-    return os.environ.get(LLM_API_KEY_ENV)

@@ -20,13 +20,13 @@ data/index/ chunks.jsonl + dense.npy + index_meta.json (written last)     (D-007
 
 ```
 user --> ui.py / ask.py --> pipeline
-                              |-- history.rewrite_query    (LLM)            Stage 5
+                              |-- history.rewrite_query    (LLM, only on follow-ups)   D-012
                               |-- retrieve.Retriever                         D-008, D-009
                               |     load_dense_index (staleness checks)
                               |     BM25 rebuilt in memory from chunks.jsonl
                               |     dense_search | bm25_search | hybrid_search (weighted RRF)
-                              '-- generate.generate_answer (LLM)            Stage 6
-                            <-- answer + cited chunk ids + sources
+                              '-- generate.generate_answer (LLM via llm.ChatClient)    D-011, D-013
+                            <-- Answer(text, search query, cited ids, invalid citations, refused, sources)
 ```
 
 Retrieval only, no LLM: `uv run python scripts/ask_retrieval.py "query" --method all`.

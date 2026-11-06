@@ -323,6 +323,10 @@ One entry per decision. Newest at the bottom.
   and "When will the Chuo Shinkansen open?" (chuo-shinkansen#0000). RRF favours
   chunks that are moderately good in both lists over one method's strong hit.
   Whether that costs recall overall is for the Stage 4 eval to decide (alpha sweep).
+- **Change (2026-11-06, after the first eval, D-010):** `HYBRID_ALPHA` 0.5 -> 0.75. On 19
+  questions α=0.75 matches dense on recall@5 (.868) and MRR within noise (.802 vs .810) and
+  keeps recall@10 = 1.0, while α=0.5 loses MRR (.765). **Tuned on the same questions it is
+  judged on**, so the gain may not generalise; the eval still sweeps 0, .25, .5, .75, 1.
 - **Revisit if:** the eval shows one method confidently right while RRF
   dilutes it (try B), or the best α found by the experiments sits at 0 or 1
   (then hybrid isn't paying for itself).
@@ -358,4 +362,88 @@ One entry per decision. Newest at the bottom.
   paraphrases (q009, q020 not in its top 10).
 - **Revisit if:** the eval grows past ~40 questions, quotes stop matching after re-fetching
   tables, or generation metrics need chunk-level gold ids.
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
+
+### D-011: LLM provider and client
+- **Date:** 2026-11-06
+- **Context:** The reviewers run the project from the README with whatever LLM access they
+  have; the brief names no provider. The user wants OpenAI as the default, with local models
+  and other providers supported.
+- **Options:**
+  - A. A thin client for the OpenAI-compatible `/chat/completions` API over `urllib`, with
+    named provider presets in config.
+  - B. The official `openai` SDK (also works with other base URLs).
+  - C. One SDK per provider (`openai`, `anthropic`, `ollama`), or LiteLLM as an adapter.
+- **Choice:** A. Presets in `config.LLM_PROVIDERS`: `openai` (default, `gpt-4o-mini`,
+  `OPENAI_API_KEY`), `ollama` (local, no key), `groq`, `openrouter`. Switch with
+  `RAGBOT_LLM_PROVIDER`; override `RAGBOT_LLM_BASE_URL`, `RAGBOT_LLM_MODEL`,
+  `RAGBOT_LLM_API_KEY_ENV` for anything else (vLLM, LM Studio, Azure-style gateways). Retries 429/5xx
+  and network errors (2/4/8 s), no retry on other 4xx. Temperature 0. With a keyed provider
+  and no key, the pipeline does not fail: it returns the retrieved passages with a notice.
+- **Why:** About 60 lines, no dependency to approve or lock, and the same code serves every
+  OpenAI-compatible server, including local ones. Keys are read from the environment by name
+  only; nothing in config.py holds a secret.
+- **Trade-off:** No streaming, no native Anthropic/Gemini protocol (use their OpenAI-compatible
+  endpoints, or OpenRouter). Model names in presets can go stale and are not validated; a wrong
+  name shows up as an HTTP 404 with the provider's message. Not tested against a live
+  endpoint in the build environment (no key, no Ollama): the HTTP layer is tested with a
+  fake transport only.
+- **Revisit if:** streaming or tool calling is needed, a provider deviates from the
+  OpenAI schema, or the retry logic grows beyond what 60 lines can hold (then adopt the SDK).
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
+
+### D-012: Multi-turn: rewrite follow-ups into standalone queries
+- **Date:** 2026-11-06
+- **Context:** The retriever has no memory: "Why did he resign?" retrieves nothing useful.
+- **Options:**
+  - A. An LLM call rewrites the last question into a standalone query using the last turns.
+  - B. Send the raw history (or the last N user turns) to the retriever as the query.
+  - C. A running summary of the conversation.
+- **Choice:** A. Last `MAX_HISTORY_TURNS` = 5 turns, oldest dropped first beyond
+  `MAX_HISTORY_CHARS` = 4000. The rewrite prompt says: replace references with names, and
+  return the question unchanged if it is already standalone or changes topic. The rewrite is
+  only used for **search**; the answering prompt gets the original question, the rewrite as a
+  note, and the prior turns as chat messages. A rewrite that is empty, multi-line, or more
+  than 3× the question length is discarded, and any LLM error falls back to the raw question.
+  The rewritten query is shown in the CLI.
+- **Why:** B drags old topics into the query (a topic switch retrieves the previous topic) and
+  dilutes the embedding; C adds a second thing to keep correct. A costs one short LLM call
+  per follow-up (none for the first question).
+- **Trade-off:** One extra LLM call and latency per follow-up. The rewriter can resolve a
+  pronoun wrongly (it picks the wrong entity from the history) and nothing detects that; the
+  original question stays in the answer prompt as a partial guard. History is stored only for
+  answered turns: a failed or no-LLM turn is not remembered. History lives in memory per
+  `Chatbot` instance, not on disk.
+- **Revisit if:** eval multi-turn cases fail on rewrites (then show the rewrite for approval,
+  or send both the raw and rewritten queries and fuse), or conversations need to span sessions.
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
+
+### D-013: Grounded generation prompt and context budget
+- **Date:** 2026-11-06
+- **Context:** The answer must rely on the retrieved text, cite it, refuse when it is
+  insufficient, and surface conflicts (FAILURE F6).
+- **Options:**
+  - A. Strict system prompt: numbered passages tagged with chunk ids, "only these passages",
+    citations by chunk id, one fixed refusal sentence, passages declared untrusted.
+  - B. No grounding instruction (free-form answer).
+  - C. A. plus a retrieval-score threshold that refuses before calling the LLM.
+- **Choice:** A. The exact text is `generate.SYSTEM_PROMPT` (and is printed by
+  `ask.py --show-prompt "question"`). Passages sit in the user message in delimited blocks;
+  best-first, up to `CONTEXT_TOKEN_BUDGET` = 3000 real bge tokens (at least one), with
+  `TOP_K` = 5. Refusal is detected by the fixed sentence. After the call, cited ids are checked
+  against the ids in the prompt: an id that was not in the context is reported as an invalid
+  citation (`Answer.invalid_citations`, a warning in the CLI). Temperature 0, answer capped at
+  500 tokens. The model has no tools and its output is displayed as text.
+- **Why:** A fixed refusal string and chunk-id citations make grounding checkable by code
+  (refusal rate, citation validity) rather than by reading. Best-first ordering puts the
+  likeliest answer first (lost-in-the-middle).
+- **Trade-off:** The prompt reduces, never removes, use of outside knowledge: a model can still
+  cite a real id and add a fact the chunk does not contain, and the citation check cannot see that
+  (that needs a faithfulness judge, Stage 7). No score threshold yet (C): weak retrieval still
+  produces an answer attempt, and the model must refuse on its own. The 3000-token budget is
+  generous for 5 chunks (max 5 × 512 = 2560) and only starts to matter if TOP_K is raised or a
+  small-context local model is used (then lower it).
+- **Revisit if:** a real run shows outside-knowledge answers or weak-retrieval answers that a
+  threshold would have stopped (record it in FAILURE.md); a local model has a context under ~4k
+  tokens; or answers need to be longer than a few sentences.
 - **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)

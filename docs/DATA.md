@@ -57,4 +57,12 @@ between the two indexes and the citations.
 | `notes` | Why the question exists (links to FAILURE.md) |
 
 ## Conversation history
-_Stage 5: to be filled._
+`history.Turn(question, answer)` objects in a list on one `pipeline.Chatbot` (memory only, lost on exit).
+Only turns with a real LLM answer are stored. Before use: at most `MAX_HISTORY_TURNS` (5) and
+`MAX_HISTORY_CHARS` (4000), oldest dropped first. Used twice: in the rewrite prompt, and as
+prior user/assistant messages in the answer prompt.
+
+## Answer (`pipeline.Answer`)
+`text`, `query` (what was searched), `rewrite_note`, `chunks` (records put in the prompt),
+`hits`, `cited` (chunk ids cited and present in the prompt), `invalid_citations` (cited but not
+in the prompt), `refused`, `used_llm`, `error`.

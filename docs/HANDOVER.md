@@ -64,10 +64,21 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
   a=0.75 0.802. Recall@10: hybrid 1.000, dense 0.947, BM25 0.895. Hybrid does not beat dense on MRR.
   Not blind: drafted after seeing 5 hand queries (stated in D-010). 86 tests pass.
 
+- **Stages 5-6: history, LLM, grounded generation (D-011, D-012, D-013).**
+  - `llm.ChatClient` (urllib, OpenAI-compatible; presets openai/ollama/groq/openrouter in config;
+    `RAGBOT_LLM_*` env overrides), `history.rewrite_query` + `trim_history`, `generate` (prompt, budget,
+    citation parsing, refusal detection), `pipeline.Chatbot` (history, limits, no-key fallback),
+    `scripts/ask.py` (single question, interactive chat, `--show-prompt`, `--provider`).
+  - `HYBRID_ALPHA` 0.5 -> 0.75 (tuned on the eval set; noted in D-009).
+  - 23 tests in `tests/test_llm_pipeline.py`; 109 pass. Docs: THREAT.md filled, FAILURE F12-F14, README LLM section.
+  - **Not verified live:** no API key and no Ollama in the build environment, so no real LLM
+    output exists yet. Verified for real: the no-key path and the exact prompt (`--show-prompt`).
+    **To do with a key:** the 3-turn conversation, one unanswerable refusal, one planted-injection
+    test, and a real out-of-context answer (needed for the presentation).
+
 ## In progress
 - Compressed plan for the deadline (agreed 2026-11-06), one row at a time, commit + tag after each:
-  1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. Stages 5–6: OpenAI-compatible LLM client over urllib (no SDK) with a
-  no-key fallback that returns retrieved passages, history rewrite, grounded prompt, `ask.py`.
+  1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. ~~Stages 5-6~~ built, live run pending a key.
   4. Stage 8: Gradio UI (approved) + README from a clean clone. 5. Docs: THREAT, FAILURE, DATA
   history section, HANDOVER. 6. User: DEFENSE.md, slides.
 - Cut for time: table fetching (D-002 revisit), overlap experiments, LLM-judge faithfulness.
@@ -94,7 +105,7 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
   the exponent rule with `<sup>` rendering (D-005 "revisit if"); fill q005/q006 expected answers;
   re-check FAILURE.md F1, F2, F4; chunk ids in FAILURE.md will shift.
 - Decide whether to rebalance the corpus (missing JR Hokkaido/Shikoku/Kyushu, Kyushu/Hokkaido Shinkansen; Chūō Shinkansen vs SCMaglev overlap).
-- **Next row:** Stages 5-6: LLM client (OpenAI-compatible, urllib), history rewrite, grounded prompt, `ask.py`.
+- **Next row:** Stage 8: Gradio UI (`ui.py`) + README tested from a clean clone. Then live LLM demos (see above).
 - Experiments planned in D-004: size 128/256/512 (384 optional); overlap 0/32/64/128 at best
   size; heading prepend on/off; query instruction on/off; fixed-size baseline. Fixed overlap 64
   is 50% of a 128-token chunk and 12.5% of 512, so the size experiment is not "size only".
