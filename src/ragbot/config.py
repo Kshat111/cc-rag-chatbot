@@ -63,23 +63,52 @@ WIKI_BARE_LABEL_MAX_WORDS = 3
 WIKI_FOOTNOTE_MARKERS = ["*", "**", "***", "†", "‡"]
 
 # --- Chunking ---
-# See D-004. Sizes are in CHUNK_LENGTH_UNIT and apply to embed_text
-# (heading path + text), so the prepended path counts against the budget.
-CHUNK_LENGTH_UNIT = "approx_tokens"  # or "chars"
-CHARS_PER_TOKEN = 4.0  # deliberately low, so token counts are overestimated
-CHUNK_SIZE = 512  # max length of a chunk
+# See D-004. CHUNK_SIZE bounds exactly what the embedding model receives:
+# passage prefix + heading path + text, plus [CLS]/[SEP] for "model_tokens".
+# "model_tokens" counts with the embedding model's own tokenizer
+# (CHUNK_TOKENIZER_REPO, below); "approx_tokens" (chars / CHARS_PER_TOKEN) and
+# "chars" are fallbacks that need no model files.
+CHUNK_LENGTH_UNIT = "model_tokens"
+CHARS_PER_TOKEN = 4.0  # fallback estimate; measured 4.30 overall, but up to 92% low on Japanese-heavy chunks
+CHUNK_SIZE = 512  # = EMBED_MAX_TOKENS: the whole chunk as embedded must fit the model
 CHUNK_OVERLAP = 64  # whole sentences carried over, within one section only
 CHUNK_MIN_SIZE = 64  # smaller chunks are merged with a neighbour
 CHUNK_PREPEND_HEADINGS = True
-# Fixed overlap means relative overlap differs per size (25% at 256, 6% at 1024).
-CHUNK_SIZE_EXPERIMENTS = [256, 512, 1024]
+# bge-small caps input at 512 tokens, so 1024 is not testable with this model
+# (D-004 note). 384 is an optional extra point. Fixed overlap 64 is 50% of a
+# 128-token chunk but 12.5% of 512, so the size experiment is not "size only".
+CHUNK_SIZE_EXPERIMENTS = [128, 256, 512]
 CHUNK_OVERLAP_EXPERIMENTS = [0, 32, 64, 128]
 CHUNKS_DUMP_PATH = INDEX_DIR / "chunks.jsonl"
 
 # --- Models ---
-EMBEDDING_MODEL = "TODO"  # TODO(decision)
+# Embeddings (D-006). EMBEDDING_MODEL is fastembed's name for the model; the
+# tokenizer comes from the repo fastembed actually downloads, so the token
+# check counts exactly what the model sees.
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+EMBED_TOKENIZER_REPO = "Qdrant/bge-small-en-v1.5-onnx-Q"
+CHUNK_TOKENIZER_REPO = EMBED_TOKENIZER_REPO  # chunk sizes are counted with the embedding tokenizer
+EMBED_DIM = 384
+EMBED_MAX_TOKENS = 512  # including [CLS]/[SEP]; fastembed silently truncates beyond this
+EMBED_USE_QUERY_INSTRUCTION = True  # switch off for the on/off experiment
+EMBED_QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
+EMBED_PASSAGE_PREFIX = ""  # BGE v1.5 uses no passage prefix
+EMBED_BATCH_SIZE = 32
+EMBED_CACHE_DIR = ROOT_DIR / "data" / "models"  # fastembed defaults to the OS temp dir
+# Fixed sentence embedded at build time and again at load time; a different
+# vector means the model changed under us (D-007).
+EMBED_PROBE_TEXT = "The Tokaido Shinkansen opened in 1964 between Tokyo and Osaka."
+EMBED_PROBE_MIN_COSINE = 0.999
+
 LLM_MODEL = "TODO"  # TODO(decision)
 REWRITE_MODEL = LLM_MODEL  # model used for follow-up query rewriting
+
+# --- Index (D-007) ---
+# Which chunk field each index reads: "embed_text" (heading path + text) or "text".
+DENSE_INDEX_FIELD = "embed_text"
+INDEX_CHUNKS_PATH = CHUNKS_DUMP_PATH  # row i of the vectors = line i of this file
+DENSE_VECTORS_PATH = INDEX_DIR / "dense.npy"
+INDEX_META_PATH = INDEX_DIR / "index_meta.json"
 
 # --- Retrieval ---
 TOP_K = 5

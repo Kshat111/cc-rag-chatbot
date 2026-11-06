@@ -110,8 +110,13 @@ One entry per decision. Newest at the bottom.
   as "size only". Overlap gets its own experiment (0, 32, 64, 128) at the
   best size.
 - **Planned experiments (recall@k on eval/questions.jsonl):**
-  1. Size 256 / 512 / 1024 (overlap 64).
-  2. Overlap 0 / 32 / 64 / 128 at the best size.
+  1. Size 128 / 256 / 512 (384 optional), overlap 64. *Changed 2026-11-05:*
+     1024 dropped because bge-small-en-v1.5 (D-006) is capped at 512 input
+     tokens, so a 1024-token chunk cannot be embedded; the token check would
+     stop the build. A long-context comparison (e.g. nomic-embed-text-v1.5)
+     is future work and would change the model as well as the size. With a
+     fixed overlap of 64, overlap is 50% of a 128-token chunk and 12.5% of 512.
+  2. Overlap 0 / 32 / 64 / 128 at the best size (128 only valid for sizes > 128).
   3. Heading-path prepend on vs off (`CHUNK_PREPEND_HEADINGS`).
   4. Baseline: fixed-size window (option A) at the best size.
 - **Stage 3 safeguard:** `index.py` must fail loudly if `CHUNK_SIZE`
@@ -122,6 +127,17 @@ One entry per decision. Newest at the bottom.
   CHUNK_SIZE, or the estimator is off by more than 25% against the real
   tokenizer.
 - **Model:** Claude Opus 5.5 (proposed), human (approved)
+- **Result (2026-11-05):** revisit condition met. Measured against the
+  bge-small tokenizer: 4.30 chars/token overall (so chars/4 overcounts on
+  average, median chunk −9%), but the worst case is +92% (Japanese-heavy
+  lists in JR Central affiliates), 64 of 249 chunks were undercounted, and
+  1 chunk (shinkansen#0020, Proposed lines) was 552 tokens, over the 512
+  limit; the D-007 token check stopped the build. Fix: new unit
+  `model_tokens` counts with the embedding model's own tokenizer, and
+  CHUNK_SIZE now bounds exactly what is embedded (passage prefix + heading
+  path + text + [CLS]/[SEP]). chars/4 stays as the fallback unit
+  `approx_tokens`. After: 248 chunks, real tokens min 23 / median 174 /
+  max 510, none over 512. Model: Claude Opus 5.5 (claude-opus-5-5).
 
 ### D-005: Text hygiene for template artifacts
 - **Date:** 2026-11-04
@@ -157,3 +173,65 @@ One entry per decision. Newest at the bottom.
   once their tables are back, so the footnote rule should then be removed,
   and the exponent rule replaced by rendering `<sup>`.
 - **Model:** Claude Opus 5.5 (proposed), human (approved)
+
+### D-006: Embedding model and runtime
+- **Date:** 2026-11-05
+- **Context:** Chunks reach 512 estimated tokens (12 are ≥480), and chars/4
+  may undercount Japanese text. Need a model with a ≥512-token input limit,
+  an English corpus with Japanese names in parentheses, CPU only, small install.
+- **Options (model):**
+  - A. BAAI/bge-small-en-v1.5: 512 tokens, 384 dims, MIT, 0.067 GB ONNX.
+  - B. BAAI/bge-base-en-v1.5: 512 tokens, 768 dims, MIT, 0.21 GB ONNX.
+  - C. intfloat/multilingual-e5-small: 512 tokens, 384 dims, MIT; handles
+    Japanese, but needs PyTorch (not in fastembed) and required prefixes.
+  - Rejected: all-MiniLM-L6-v2 (max_seq_length 256 would cut 91/249 chunks);
+    nomic-embed-text-v1.5 (8192 tokens, but 0.52 GB and custom architecture,
+    not needed while chunks are ≤512).
+- **Options (runtime):**
+  - fastembed (Qdrant, Apache-2.0): onnxruntime, no PyTorch, ~32 packages /
+    ~52 MB download.
+  - sentence-transformers (Hugging Face, Apache-2.0): PyTorch, ~41 packages /
+    ~166 MB download; original fp32 weights, every Hub model, fine-tuning.
+- **Choice:** A on fastembed. Query instruction "Represent this sentence for
+  searching relevant passages: " on by default (`EMBED_USE_QUERY_INSTRUCTION`),
+  no passage prefix. Model files cached in `data/models/` (gitignored); the
+  one-time download from huggingface.co is approved.
+- **Why:** Smallest model that meets the 512-token requirement, MIT licence,
+  no PyTorch. The corpus and questions are English; exact matches on Japanese
+  names are BM25's job.
+- **Trade-off:** Qdrant's optimised ONNX conversion differs slightly from the
+  original weights. fastembed truncates at 512 silently (guarded by the
+  real-tokenizer check in D-007) and pulls in unused pillow, sympy and mmh3.
+  Its default cache is the system temp dir, so the cache dir is set explicitly.
+- **Revisit if:** paraphrase questions have low recall@k (try B, one config
+  line), Japanese queries are needed (C), or chunks must exceed 512 tokens.
+- **Model:** Claude Opus 5.5 (claude-opus-5-5) (proposed), human (approved)
+
+### D-007: Dense index, persistence and staleness
+- **Date:** 2026-11-05
+- **Context:** 249 chunks × 384 dims. The index must not silently disagree
+  with the corpus, chunk settings or model that produced it, and must never
+  hold a vector for a truncated chunk.
+- **Options:**
+  - A. NumPy float32 matrix, L2-normalised, exact cosine by dot product.
+  - B. FAISS IndexFlatIP: same exact search, extra dependency.
+  - C. Approximate search (HNSW/IVF): only pays off around 10⁵–10⁶ vectors.
+- **Choice:** A. Saved to `data/index/`: `chunks.jsonl` (row order),
+  `dense.npy`, `index_meta.json` (written last, all files written atomically).
+  Before embedding, every chunk's indexed text (passage prefix + field) is
+  tokenized with the model's own tokenizer, special tokens included and
+  truncation off; any chunk over 512 aborts the build and nothing is written.
+  At load, a stale index raises `StaleIndexError` naming what differs:
+  model, dims, max tokens, passage prefix, dense field, chunk_config,
+  manifest.json sha256, chunks.jsonl sha256, row count, or a probe sentence
+  whose embedding no longer matches (catches a silently updated model, since
+  fastembed does not pin a model revision).
+- **Why:** At this size exact search is sub-millisecond and needs nothing
+  beyond numpy (already pulled in by fastembed). The checks turn "silently
+  wrong" into "loud error".
+- **Trade-off:** No approximate search; any change to config or corpus
+  requires a rebuild (seconds at this size). The query instruction is
+  recorded but not part of the staleness check, because it does not change
+  stored vectors, so the on/off experiment needs no rebuild.
+- **Revisit if:** more than ~100k vectors or query latency over budget.
+- **Model:** Claude Opus 5.5 (claude-opus-5-5) (proposed), human (approved)

@@ -3,9 +3,10 @@
 .env.*
 !.env.example
 
-# Generated indexes
+# Generated indexes and downloaded models
 data/index/*
 !data/index/.gitkeep
+data/models/
 
 # Python
 __pycache__/

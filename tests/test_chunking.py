@@ -1,5 +1,6 @@
 """Tests for heading-aware chunking (D-004). Synthetic documents only."""
 
+import math
 import re
 
 import pytest
@@ -151,3 +152,57 @@ def test_prepend_toggle():
 def test_config_validation(kw):
     with pytest.raises(ValueError):
         cfg(**kw)
+
+
+# --- "model_tokens" unit (fake tokenizer: one token per word, +2 specials) -----
+
+from ragbot.chunking import register_token_counter  # noqa: E402
+
+register_token_counter("fake-words", lambda text, special=True: len(text.split()) + (2 if special else 0))
+
+
+def tok_cfg(**kw):
+    base = dict(size=12, overlap=0, min_size=0, unit="model_tokens", tokenizer="fake-words")
+    base.update(kw)
+    return ChunkConfig(**base)
+
+
+def one_word_sentences(n):
+    # Capitalised: the sentence splitter does not split before a lowercase word.
+    return " ".join(f"W{i}." for i in range(n))
+
+
+def test_model_tokens_budget_covers_prefix_path_and_specials():
+    # Path "Line > A" = 3 tokens, prefix "passage:" = 1, specials = 2,
+    # so at most 12 - 6 = 6 words of text per chunk.
+    c = tok_cfg(passage_prefix="passage: ")
+    chunks = chunk_document(doc(f"# Line\n\n## A\n\n{one_word_sentences(20)}\n"), c)
+    counter = lambda t: len(t.split()) + 2  # noqa: E731
+    assert all(counter("passage: " + ch["embed_text"]) <= 12 for ch in chunks)
+    assert max(len(ch["text"].split()) for ch in chunks) == 6  # packed tight, not over
+    assert all(ch["n_tokens"] == counter("passage: " + ch["embed_text"]) for ch in chunks)
+
+
+def test_passage_prefix_counts_against_the_budget():
+    text = f"# Line\n\n## A\n\n{one_word_sentences(20)}\n"
+    without = chunk_document(doc(text), tok_cfg())
+    with_prefix = chunk_document(doc(text), tok_cfg(passage_prefix="a b c "))
+    assert len(with_prefix) > len(without)
+
+
+def test_overlap_is_measured_without_special_tokens():
+    # overlap=2 fits two one-word sentences only if [CLS]/[SEP] are not counted.
+    chunks = chunk_document(doc(f"# Line\n\n## A\n\n{one_word_sentences(20)}\n"), tok_cfg(overlap=2))
+    for prev, nxt in zip(chunks, chunks[1:]):
+        assert nxt["text"].split()[:2] == prev["text"].split()[-2:]
+
+
+def test_records_keep_the_chars4_estimate_for_comparison():
+    ch = chunk_document(doc("# Line\n\n## A\n\nSome text here.\n"), tok_cfg())[0]
+    assert ch["n_tokens_est"] == math.ceil(len(ch["embed_text"]) / 4)
+    assert ch["chunk_config"]["unit"] == "model_tokens" and ch["chunk_config"]["tokenizer"] == "fake-words"
+
+
+def test_model_tokens_without_tokenizer_is_rejected():
+    with pytest.raises(ValueError, match="tokenizer"):
+        ChunkConfig(size=64, overlap=0, min_size=0, unit="model_tokens")

@@ -4,9 +4,11 @@ version = "0.1.0"
 description = "Retrieval-augmented chatbot over a small document set, with hybrid (dense + BM25) search."
 readme = "README.md"
 requires-python = ">=3.11"
-# Runtime deps are intentionally empty until each one is approved
-# (see CLAUDE.md and docs/DECISIONS.md). Add with `uv add <pkg>`.
-dependencies = []
+# Each runtime dependency is approved first and logged in docs/DECISIONS.md
+# (fastembed: D-006). Add with `uv add <pkg>`.
+dependencies = [
+    "fastembed>=0.9.1",
+]
 
 [dependency-groups]
 dev = []

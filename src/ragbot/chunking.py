@@ -7,6 +7,10 @@ whole sentences and only between chunks of the same section, so text never
 appears under the wrong heading path. Chunks smaller than min_size are
 merged with a neighbour inside the same top-level (##) section.
 
+What "fits" means: the exact string the embedding model receives
+(passage prefix + heading path + text) measured in `unit`, and for
+"model_tokens" including the [CLS]/[SEP] special tokens, is <= size.
+
 Run `uv run python -m ragbot.chunking [--dump]` for corpus statistics.
 """
 
@@ -16,6 +20,7 @@ import math
 import re
 import statistics
 from dataclasses import asdict, dataclass
+from functools import lru_cache
 from pathlib import Path
 
 from ragbot import config
@@ -26,6 +31,44 @@ _HEADING = re.compile(r"^(#{1,6}) (.*)$")
 # Known miss: "U.S. Army" splits after "U.S.".
 _SENTENCE_END = re.compile(r"(?<=[.!?])\s+(?=[^\sa-z])")
 
+UNITS = ("model_tokens", "approx_tokens", "chars")
+
+
+# --- Token counters ------------------------------------------------------------------
+# A counter is fn(text, add_special_tokens) -> int. Real ones are loaded from the
+# Hugging Face cache by repo name; tests register fakes so no model is needed.
+
+_COUNTERS = {}
+
+
+def register_token_counter(name, fn):
+    _COUNTERS[name] = fn
+
+
+@lru_cache(maxsize=None)
+def _load_hf_counter(repo):
+    # Same tokenizer.json fastembed uses (D-006), with truncation and padding
+    # off so long texts report their true length instead of a capped one.
+    from huggingface_hub import hf_hub_download
+    from tokenizers import Tokenizer
+
+    path = hf_hub_download(repo, "tokenizer.json", cache_dir=str(config.EMBED_CACHE_DIR))
+    tok = Tokenizer.from_file(path)
+    tok.no_truncation()
+    tok.no_padding()
+
+    def count(text, add_special_tokens=True):
+        return len(tok.encode(text, add_special_tokens=add_special_tokens).ids)
+
+    return count
+
+
+def get_token_counter(name):
+    return _COUNTERS.get(name) or _load_hf_counter(name)
+
+
+# --- Config -----------------------------------------------------------------------------
+
 
 @dataclass(frozen=True)
 class ChunkConfig:
@@ -35,6 +78,8 @@ class ChunkConfig:
     unit: str = "approx_tokens"
     chars_per_token: float = 4.0
     prepend_headings: bool = True
+    tokenizer: str | None = None  # required for unit "model_tokens"
+    passage_prefix: str = ""  # counted as part of what is embedded
 
     def __post_init__(self):
         if self.size <= 0:
@@ -43,8 +88,10 @@ class ChunkConfig:
             raise ValueError("overlap must be >= 0 and < size")
         if not 0 <= self.min_size < self.size:
             raise ValueError("min_size must be >= 0 and < size")
-        if self.unit not in ("approx_tokens", "chars"):
-            raise ValueError(f"unknown unit {self.unit!r}")
+        if self.unit not in UNITS:
+            raise ValueError(f"unknown unit {self.unit!r}; expected one of {UNITS}")
+        if self.unit == "model_tokens" and not self.tokenizer:
+            raise ValueError("unit 'model_tokens' needs a tokenizer")
 
     @classmethod
     def from_config(cls, **overrides):
@@ -55,13 +102,23 @@ class ChunkConfig:
             unit=config.CHUNK_LENGTH_UNIT,
             chars_per_token=config.CHARS_PER_TOKEN,
             prepend_headings=config.CHUNK_PREPEND_HEADINGS,
+            tokenizer=config.CHUNK_TOKENIZER_REPO,
+            passage_prefix=config.EMBED_PASSAGE_PREFIX,
         )
         values.update(overrides)
         return cls(**values)
 
     def length(self, text):
-        # The pluggable length function. A real tokenizer can replace this
-        # once the embedding model is chosen (D-004).
+        """Length of plain text, no prefix, no special tokens (used for overlap)."""
+        return self._measure(text, special=False)
+
+    def embedded_length(self, path, text):
+        """Length of exactly what the model is given for this chunk."""
+        return self._measure(self.passage_prefix + _embed_text(path, text, self), special=True)
+
+    def _measure(self, text, special):
+        if self.unit == "model_tokens":
+            return get_token_counter(self.tokenizer)(text, special)
         if self.unit == "chars":
             return len(text)
         return math.ceil(len(text) / self.chars_per_token)
@@ -100,6 +157,8 @@ def parse_sections(text):
 
 # An atom is (text, ends_line). Atoms of one line are joined with a space,
 # and a line break follows an atom that ends its line.
+# `fits(text)` answers: would this text, as a chunk of the current section, be
+# within size once prefix, heading path and special tokens are added?
 
 
 def _join(atoms):
@@ -111,13 +170,13 @@ def _join(atoms):
     return "".join(out)
 
 
-def _split_words(text, budget, cfg):
+def _split_words(text, fits):
     """Split an oversized sentence at word boundaries (hard-cut a giant word)."""
     pieces, cur = [], ""
     for word in text.split():
-        while cfg.length(word) > budget:
+        while not fits(word):
             k = len(word)
-            while cfg.length(word[:k]) > budget:
+            while k > 1 and not fits(word[:k]):
                 k -= 1
             if cur:
                 pieces.append(cur)
@@ -125,7 +184,7 @@ def _split_words(text, budget, cfg):
             pieces.append(word[:k])
             word = word[k:]
         candidate = f"{cur} {word}" if cur else word
-        if cfg.length(candidate) <= budget:
+        if fits(candidate):
             cur = candidate
         else:
             pieces.append(cur)
@@ -135,19 +194,16 @@ def _split_words(text, budget, cfg):
     return pieces
 
 
-def _atomize(lines, budget, cfg):
+def _atomize(lines, fits):
     """Lines that fit stay whole; longer ones become sentences, then words."""
     atoms = []
     for line in lines:
-        if cfg.length(line) <= budget:
+        if fits(line):
             atoms.append((line, True))
             continue
         pieces = []
         for sentence in _SENTENCE_END.split(line):
-            if cfg.length(sentence) <= budget:
-                pieces.append(sentence)
-            else:
-                pieces.extend(_split_words(sentence, budget, cfg))
+            pieces.extend([sentence] if fits(sentence) else _split_words(sentence, fits))
         atoms.extend((p, i == len(pieces) - 1) for i, p in enumerate(pieces))
     return atoms
 
@@ -161,9 +217,9 @@ def _sentences(atoms):
     return out
 
 
-def _overlap_tail(atoms, next_atom, budget, cfg):
-    """Trailing whole sentences of `atoms`, at most cfg.overlap long, that
-    still leave room for next_atom within budget."""
+def _overlap_tail(atoms, next_atom, fits, cfg):
+    """Trailing whole sentences of `atoms`, at most cfg.overlap long (plain
+    text), that still leave room for next_atom."""
     if cfg.overlap == 0:
         return []
     sentences = _sentences(atoms)
@@ -172,18 +228,18 @@ def _overlap_tail(atoms, next_atom, budget, cfg):
         candidate = [sentence] + tail
         if cfg.length(_join(candidate)) > cfg.overlap:
             break
-        if cfg.length(_join(candidate + [next_atom])) > budget:
+        if not fits(_join(candidate + [next_atom])):
             break
         tail = candidate
     return tail
 
 
-def _pack(atoms, budget, cfg):
+def _pack(atoms, fits, cfg):
     chunks, cur = [], []
     for atom in atoms:
-        if cur and cfg.length(_join(cur + [atom])) > budget:
+        if cur and not fits(_join(cur + [atom])):
             chunks.append(cur)
-            cur = _overlap_tail(cur, atom, budget, cfg)
+            cur = _overlap_tail(cur, atom, fits, cfg)
         cur.append(atom)
     if cur:
         chunks.append(cur)
@@ -225,25 +281,22 @@ def _merge(first, second):
 
 
 def _merge_small(raw, cfg):
-    def fits(c):
-        return cfg.length(_embed_text(c["path"], c["text"], cfg)) <= cfg.size
-
-    def small(c):
-        return cfg.length(_embed_text(c["path"], c["text"], cfg)) < cfg.min_size
+    def size(c):
+        return cfg.embedded_length(c["path"], c["text"])
 
     i = 0
     while i < len(raw):
-        if small(raw[i]):
+        if size(raw[i]) < cfg.min_size:
             # Prefer merging forward; fall back to the previous chunk (e.g. a
             # small last chunk of a section). Never across a ## boundary.
             if i + 1 < len(raw) and raw[i + 1]["top"] == raw[i]["top"]:
                 merged = _merge(raw[i], raw[i + 1])
-                if fits(merged):
+                if size(merged) <= cfg.size:
                     raw[i : i + 2] = [merged]
                     continue
             if i > 0 and raw[i - 1]["top"] == raw[i]["top"]:
                 merged = _merge(raw[i - 1], raw[i])
-                if fits(merged):
+                if size(merged) <= cfg.size:
                     raw[i - 1 : i + 1] = [merged]
                     i -= 1
                     continue
@@ -255,12 +308,15 @@ def chunk_document(doc, cfg):
     """Chunk one document dict (from ingest.load_documents) into records."""
     raw = []
     for path, lines in parse_sections(doc["text"]):
-        budget = cfg.size - (cfg.length(_path_str(path) + "\n\n") if cfg.prepend_headings else 0)
-        if budget <= 0:
-            raise ValueError(f"heading path longer than chunk size: {_path_str(path)!r}")
+
+        def fits(text, path=path):
+            return cfg.embedded_length(path, text) <= cfg.size
+
+        if not fits(""):
+            raise ValueError(f"prefix + heading path alone exceed chunk size: {_path_str(path)!r}")
         # Title plus ## heading; the lead section (path of length 1) is its own group.
         top = tuple(path[:2])
-        for text in _pack(_atomize(lines, budget, cfg), budget, cfg):
+        for text in _pack(_atomize(lines, fits), fits, cfg):
             raw.append({"path": path, "top": top, "text": text})
 
     raw = _merge_small(raw, cfg)
@@ -277,7 +333,10 @@ def chunk_document(doc, cfg):
                 "heading_path_str": _path_str(c["path"]),
                 "text": c["text"],
                 "embed_text": embed,
-                "n_tokens": estimate_tokens(embed),
+                # Length in cfg.unit of exactly what is embedded (prefix and,
+                # for model_tokens, [CLS]/[SEP] included).
+                "n_tokens": cfg.embedded_length(c["path"], c["text"]),
+                "n_tokens_est": estimate_tokens(embed),  # chars/4, kept for comparison
                 "n_chars": len(c["text"]),
                 "source_url": doc["source_url"],
                 "permalink": doc["permalink"],
@@ -316,9 +375,10 @@ def main():
 
     print(f"Config: {asdict(cfg)}")
     print(f"Documents: {len(docs)}   Chunks: {len(chunks)}")
-    print(f"Tokens (est., embed_text): {_describe([c['n_tokens'] for c in chunks])}")
-    print(f"Chars (text):              {_describe([c['n_chars'] for c in chunks])}")
-    under = sum(1 for c in chunks if cfg.length(c["embed_text"]) < cfg.min_size)
+    print(f"Length ({cfg.unit}, as embedded): {_describe([c['n_tokens'] for c in chunks])}")
+    print(f"chars/4 estimate:                 {_describe([c['n_tokens_est'] for c in chunks])}")
+    print(f"Chars (text):                     {_describe([c['n_chars'] for c in chunks])}")
+    under = sum(1 for c in chunks if c["n_tokens"] < cfg.min_size)
     print(f"Chunks still under min_size ({cfg.min_size}): {under}")
     print("Chunks per document:")
     for doc in docs:
@@ -326,6 +386,8 @@ def main():
         print(f"  {n:>4}  {doc['title']}")
 
     if args.dump:
+        # Note: this overwrites the index's chunks.jsonl; the index then reports
+        # itself stale until scripts/build_index.py is rerun (D-007).
         config.CHUNKS_DUMP_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(config.CHUNKS_DUMP_PATH, "w", encoding="utf-8") as f:
             for c in chunks:
