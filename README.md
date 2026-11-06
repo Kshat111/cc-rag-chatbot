@@ -112,11 +112,35 @@ RAGBOT_LLM_API_KEY_ENV=MY_KEY_VAR \
 uv run python scripts/ask.py "..."
 ```
 
-Copy `.env.example` to `.env` and fill in your key to avoid exporting it every time:
+To avoid exporting the key in every new terminal, put it in a `.env` file (gitignored, never
+committed) and load it into the shell yourself. The app does **not** read `.env` on its own:
 
 ```bash
-cp .env.example .env   # then edit .env — it is gitignored and never committed
+cp .env.example .env         # then edit .env: OPENAI_API_KEY=your-key (no quotes, no spaces)
+set -a; source .env; set +a  # run this in each new terminal before starting the chatbot
 ```
+
+### Using Ollama (free, local, no key, no account)
+
+1. **Install Ollama** from [ollama.com/download](https://ollama.com/download) (macOS, Linux, Windows).
+   On macOS and Windows the app starts the server for you; on Linux run `ollama serve` in a
+   separate terminal. (If `ollama serve` says the address is already in use, it is already running.)
+2. **Download a model once** (about 2 GB for the default):
+   ```bash
+   ollama pull llama3.2
+   ollama list                # llama3.2 should appear
+   ```
+3. **Run the chatbot with it.** Set the provider in the same command, no key needed:
+   ```bash
+   RAGBOT_LLM_PROVIDER=ollama uv run python scripts/ask.py              # chat in the terminal
+   RAGBOT_LLM_PROVIDER=ollama uv run python -m ragbot.ui                # web UI at http://127.0.0.1:7860
+   ```
+4. **Another model?** Pull it and name it: `RAGBOT_LLM_MODEL=<name from ollama list>`.
+
+The first answer can take a while because Ollama loads the model into memory. Small local
+models follow the citation and "I don't know" rules less reliably than hosted ones: the CLI and UI
+show a warning when an answer has no valid citation, or is only a citation. For cleaner
+answers use a larger model or a hosted provider from the table above.
 
 ---
 
