@@ -1,104 +1,215 @@
 # rag-chatbot
 
-A retrieval-augmented chatbot over a small set (10–20) of source documents.
-Retrieval is hybrid: dense embeddings + BM25. Follow-up questions are rewritten
-using chat history before retrieval.
+A chatbot that answers questions about Japanese high-speed rail (Shinkansen) using
+Wikipedia articles as its knowledge base. It finds the most relevant passages, then
+asks an LLM to write a grounded answer from them and cite its sources.
 
-> Status: complete pipeline (ingest, chunk, index, hybrid retrieval, evaluation, CLI and Gradio chat). See docs/HANDOVER.md.
+> **Status:** complete pipeline — ingest, chunk, index, hybrid retrieval, evaluation, CLI and Gradio chat UI.
 
-## Install
+---
 
-Requires [uv](https://docs.astral.sh/uv/) (it installs the right Python itself).
+## What can I ask?
+
+- *"When did the Tokaido Shinkansen open?"*
+- *"Who built the N700S?"*
+- *"Why do Shinkansen trains have such long pointed noses?"*
+- *"When will the Chuo Shinkansen be finished?"*
+- *"What is the top speed of the E5 series?"*
+- *"Who was Hideo Shima?"*
+
+The bot answers only from its Wikipedia corpus and says "I don't know" if the answer
+isn't there. Follow-up questions work: it uses the conversation history to find the
+right passages.
+
+---
+
+## What you need before starting
+
+| Requirement | How to get it |
+|---|---|
+| **Git** | [git-scm.com](https://git-scm.com) |
+| **uv** (installs Python for you) | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| **An API key** for one LLM | See the table in [Supported LLM providers](#supported-llm-providers) below |
+
+> **No account?** Use [Ollama](https://ollama.ai) to run a model on your own machine — it's free and needs no API key.
+
+---
+
+## Quick start
 
 ```bash
+# 1. Download the code
 git clone <repo-url> rag-chatbot
 cd rag-chatbot
+
+# 2. Install dependencies (uv installs the right Python version automatically)
 uv sync
-```
 
-The 15 Wikipedia articles are already committed in `data/raw/`, so no fetch is needed.
-The first index build downloads the embedding model (BAAI/bge-small-en-v1.5, ~67 MB) from
-huggingface.co into `data/models/` and takes about 40 s on a laptop CPU; later runs are offline.
-
-## Usage
-
-```bash
-# 1. Build the dense + BM25 data into data/index/ (BM25 itself is rebuilt in memory at load)
+# 3. Build the index
+#    First run downloads the embedding model (~67 MB) and takes about 40 s.
+#    Later runs are offline and instant.
 uv run python scripts/build_index.py
 
-# 2. Ask a question from the CLI. Needs an LLM (see "Choosing an LLM" below);
-#    without one it still runs and prints the retrieved passages.
+# 4. Set your API key (pick any provider from the table below)
+export OPENAI_API_KEY=sk-...
+
+# 5. Ask a question
+uv run python scripts/ask.py "When did the Tokaido Shinkansen open?"
+
+# Or open the chat UI in your browser
+uv run python -m ragbot.ui        # then visit http://127.0.0.1:7860
+```
+
+The 15 Wikipedia articles are already committed in `data/raw/` — no separate download needed.
+
+---
+
+## Supported LLM providers
+
+The chatbot works with any OpenAI-compatible chat endpoint. Set **one** API key, then
+run the command.
+
+| Provider | Get a key | Key variable | Provider flag |
+|---|---|---|---|
+| **OpenAI / ChatGPT** | [platform.openai.com](https://platform.openai.com) | `OPENAI_API_KEY` | `openai` *(default)* |
+| **Anthropic / Claude** | [openrouter.ai](https://openrouter.ai) ¹ | `OPENROUTER_API_KEY` | `anthropic` |
+| **Google Gemini** | [aistudio.google.com](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` | `gemini` |
+| **GitHub Copilot** | [github.com/marketplace/models](https://github.com/marketplace/models) | `GITHUB_TOKEN` | `github` |
+| **xAI Grok** | [console.x.ai](https://console.x.ai) | `XAI_API_KEY` | `grok` |
+| **Alibaba Qwen** | [dashscope.console.aliyun.com](https://dashscope.console.aliyun.com) | `DASHSCOPE_API_KEY` | `qwen` |
+| **Groq** (fast) | [console.groq.com](https://console.groq.com) | `GROQ_API_KEY` | `groq` |
+| **Ollama** (free, local) | [ollama.ai](https://ollama.ai) — no key | *(none)* | `ollama` |
+
+¹ Claude is routed through [OpenRouter](https://openrouter.ai) because Anthropic's API uses
+a different protocol. Create a free OpenRouter account, add credits, and use your OpenRouter key.
+To pick a specific Claude model: `RAGBOT_LLM_MODEL=anthropic/claude-opus-4`.
+
+**How to use any provider:**
+
+```bash
+# Export your key, then set RAGBOT_LLM_PROVIDER to the flag in the table above.
+
+# Gemini example
+export GEMINI_API_KEY=...
+RAGBOT_LLM_PROVIDER=gemini uv run python scripts/ask.py "Why do Shinkansen have long noses?"
+
+# Claude example (via OpenRouter)
+export OPENROUTER_API_KEY=...
+RAGBOT_LLM_PROVIDER=anthropic uv run python scripts/ask.py "Who was Hideo Shima?"
+
+# Grok example
+export XAI_API_KEY=...
+RAGBOT_LLM_PROVIDER=grok uv run python scripts/ask.py "When will the Chuo Shinkansen open?"
+
+# Ollama example (free, runs on your machine)
+ollama pull llama3.2       # download once (~2 GB)
+RAGBOT_LLM_PROVIDER=ollama uv run python scripts/ask.py "What is the N700S?"
+
+# Use a custom endpoint or model (overrides any preset)
+RAGBOT_LLM_BASE_URL=http://localhost:8000/v1 \
+RAGBOT_LLM_MODEL=my-model \
+RAGBOT_LLM_API_KEY_ENV=MY_KEY_VAR \
+uv run python scripts/ask.py "..."
+```
+
+Copy `.env.example` to `.env` and fill in your key to avoid exporting it every time:
+
+```bash
+cp .env.example .env   # then edit .env — it is gitignored and never committed
+```
+
+---
+
+## All commands
+
+```bash
+# Ask a single question
 uv run python scripts/ask.py "your question"
-uv run python scripts/ask.py                      # interactive chat with history (/reset, /quit)
-uv run python scripts/ask_retrieval.py "N700S" --method all   # retrieval only, no LLM
 
-# 3. Launch the UI, then open http://127.0.0.1:7860
-uv run python -m ragbot.ui
+# Interactive chat with follow-up questions  (/reset to start over, /quit to exit)
+uv run python scripts/ask.py
 
-# 4. Evaluate retrieval (eval/questions.jsonl): recall@k and MRR, saved to eval/results/
+# Retrieval only — see which passages the bot finds, without calling an LLM
+uv run python scripts/ask_retrieval.py "N700S" --method all
+
+# Launch the web UI
+uv run python -m ragbot.ui        # open http://127.0.0.1:7860
+
+# Measure retrieval quality (recall@k and MRR on the eval set)
 uv run python scripts/evaluate.py
 
-# 4b. Chunk size / overlap experiments (in memory, ~3 min; does not touch data/index)
+# Chunk size / overlap experiments (in memory, ~3 min; does not change the index)
 uv run python scripts/experiment_chunking.py
 
-# 5. Unit tests (no model download, no network)
+# Unit tests — no model download, no network required
 uv run --with pytest pytest -q
 
-# Optional: re-download the corpus (overwrites data/raw; the index must then be rebuilt)
+# Re-download the Wikipedia corpus (overwrites data/raw/; rebuild the index after)
 uv run python scripts/fetch_corpus.py
 ```
 
-If the index is missing or out of date (corpus, chunk settings or model changed), the tools stop
-and tell you to run `scripts/build_index.py`.
+If the index is out of date (corpus, chunk settings or embedding model changed),
+every tool stops and tells you to run `scripts/build_index.py`.
 
-## Choosing an LLM
+---
 
-The chatbot talks to any OpenAI-compatible chat endpoint. Export the key in your shell
-(never commit it) and pick a provider:
+## How it works (brief)
 
-```bash
-export OPENAI_API_KEY=...                                  # default provider: openai (gpt-4o-mini)
-RAGBOT_LLM_PROVIDER=ollama uv run python scripts/ask.py "..."      # local model, no key (ollama serve; ollama pull llama3.2)
-export GROQ_API_KEY=...; RAGBOT_LLM_PROVIDER=groq uv run python scripts/ask.py "..."
-# anything else that speaks the OpenAI API:
-RAGBOT_LLM_BASE_URL=http://localhost:8000/v1 RAGBOT_LLM_MODEL=my-model RAGBOT_LLM_API_KEY_ENV=MY_KEY ...
-```
+1. **Index (offline, one time):** 15 Wikipedia articles are split into ~250 short
+   passages. Each passage is converted to a vector by a small embedding model
+   ([bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5), ~67 MB)
+   and saved to `data/index/`.
 
-Presets (openai, ollama, groq, openrouter) are in `src/ragbot/config.py`.
+2. **Retrieve:** when you ask a question, the system finds the most relevant
+   passages in two ways — dense vector similarity (semantic) and BM25 keyword
+   matching — then merges the results.
+
+3. **Generate:** the top passages are sent to the LLM with a strict instruction
+   to answer only from them and to cite which passage each fact comes from.
+
+4. **Follow-ups:** if you ask a follow-up ("what about the E5?"), the previous
+   conversation is used to rewrite your question before retrieval.
+
+---
+
+## File layout
+
+| Path | What it does |
+|---|---|
+| `src/ragbot/config.py` | All tunables: chunk size, models, retrieval k, paths |
+| `src/ragbot/ingest.py` | Load and clean Wikipedia articles |
+| `src/ragbot/chunking.py` | Split articles into passages |
+| `src/ragbot/index.py` | Build the dense vector index |
+| `src/ragbot/retrieve.py` | Dense, BM25, and hybrid search |
+| `src/ragbot/history.py` | Rewrite follow-up questions using chat history |
+| `src/ragbot/generate.py` | Build the prompt and call the LLM |
+| `src/ragbot/pipeline.py` | Full query pipeline (retrieve → generate) |
+| `src/ragbot/ui.py` | Gradio chat UI |
+| `scripts/` | Entry points: build_index, ask, evaluate |
+| `eval/` | Test questions and saved retrieval metrics |
+| `data/raw/` | 15 Wikipedia articles (committed to the repo) |
+| `data/index/` | Built index — gitignored; rebuild with `build_index.py` |
+
+---
 
 ## Troubleshooting
 
-- `Index not usable ... stale`: run `uv run python scripts/build_index.py`.
-- `HTTP 429 ... no credits` / `quota`: the key is valid but the account has no API credit; add billing or use another provider.
-- `HTTP 401`: wrong key. `HTTP 404`: the model name is not available; set `RAGBOT_LLM_MODEL`.
-- Ollama `Connection refused`: start it (`ollama serve`; if it says the address is in use, it is already running).
-- The UI says "No LLM is configured": the key must be exported in the same terminal that starts the UI.
-- Small local models may return a citation only or ignore the rules; the CLI/UI show a warning. Use a stronger model.
-
-## Layout
-
-| Path | Purpose |
+| Problem | Fix |
 |---|---|
-| `src/ragbot/config.py` | All tunables: chunk size, overlap, models, k, paths |
-| `src/ragbot/ingest.py` | Load + clean documents |
-| `src/ragbot/chunking.py` | Chunking strategy |
-| `src/ragbot/index.py` | Build dense + BM25 indexes |
-| `src/ragbot/retrieve.py` | Dense, BM25, hybrid search |
-| `src/ragbot/history.py` | Follow-up query rewriting |
-| `src/ragbot/generate.py` | Grounded prompt + LLM call |
-| `src/ragbot/pipeline.py` | Query pipeline loop |
-| `src/ragbot/ui.py` | Gradio or Streamlit app |
-| `scripts/` | Entry points: build_index, ask, evaluate |
-| `eval/` | Hand-written test set and saved metric outputs |
-| `docs/` | Paper trail: handover, decisions, architecture, constraints |
+| `Index not usable ... stale` | Run `uv run python scripts/build_index.py` |
+| `HTTP 429` / `no credits` / `quota` | Add billing to your account, or switch provider |
+| `HTTP 401 Unauthorized` | Wrong API key — double-check the value |
+| `HTTP 404` | Model name not available — set `RAGBOT_LLM_MODEL=<name>` |
+| Ollama `Connection refused` | Start it: `ollama serve` (if the port is in use, it is already running) |
+| UI: *"No LLM is configured"* | The key must be exported **in the same terminal** that starts the UI |
+| Answer is only a citation with no text | The model is too small; switch to a stronger one |
+| Answer is confident but wrong | Check the cited passage — the bot answers from Wikipedia only |
+
+---
 
 ## Credits
 
-Corpus text in `data/raw/` is from [Wikipedia](https://en.wikipedia.org/), licensed under
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Article URLs and exact
-revision permalinks (whose history pages list the authors) are in `data/raw/manifest.json`.
-Text was cleaned (references, link lists and tables removed).
-
-## Docs
-
-Start with `docs/HANDOVER.md`, `docs/CONSTRAINTS.md`, `docs/ARCHITECTURE.md`.
+Corpus text in `data/raw/` is from [Wikipedia](https://en.wikipedia.org/), licensed
+under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Article URLs
+and exact revision permalinks (whose history pages list the authors) are in
+`data/raw/manifest.json`. Tables and reference sections were removed during cleaning.

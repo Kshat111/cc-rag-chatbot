@@ -104,10 +104,25 @@ EMBED_PROBE_MIN_COSINE = 0.999
 # provider with RAGBOT_LLM_PROVIDER, or override pieces with RAGBOT_LLM_BASE_URL
 # / RAGBOT_LLM_MODEL / RAGBOT_LLM_API_KEY_ENV (env var that holds the key).
 LLM_PROVIDERS = {
+    # OpenAI / ChatGPT — https://platform.openai.com
     "openai": {"base_url": "https://api.openai.com/v1", "model": "gpt-4o-mini", "key_env": "OPENAI_API_KEY"},
-    "ollama": {"base_url": "http://localhost:11434/v1", "model": "llama3.2", "key_env": None},  # local, no key
+    # Anthropic / Claude — routed via OpenRouter (api.anthropic.com uses a different protocol)
+    # Override model: RAGBOT_LLM_MODEL=anthropic/claude-opus-4 (or any model on openrouter.ai)
+    "anthropic": {"base_url": "https://openrouter.ai/api/v1", "model": "anthropic/claude-3-5-sonnet", "key_env": "OPENROUTER_API_KEY"},
+    # Google Gemini — https://aistudio.google.com/apikey
+    "gemini": {"base_url": "https://generativelanguage.googleapis.com/v1beta/openai", "model": "gemini-2.0-flash", "key_env": "GEMINI_API_KEY"},
+    # GitHub Models / Copilot — https://github.com/marketplace/models (free tier available)
+    "github": {"base_url": "https://models.inference.ai.azure.com", "model": "gpt-4o-mini", "key_env": "GITHUB_TOKEN"},
+    # xAI Grok — https://console.x.ai
+    "grok": {"base_url": "https://api.x.ai/v1", "model": "grok-2", "key_env": "XAI_API_KEY"},
+    # Alibaba Qwen / DashScope — https://dashscope.console.aliyun.com (international endpoint)
+    "qwen": {"base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1", "model": "qwen-plus", "key_env": "DASHSCOPE_API_KEY"},
+    # Groq (fast hosted inference) — https://console.groq.com
     "groq": {"base_url": "https://api.groq.com/openai/v1", "model": "llama-3.3-70b-versatile", "key_env": "GROQ_API_KEY"},
+    # OpenRouter (access any model via one key) — https://openrouter.ai
     "openrouter": {"base_url": "https://openrouter.ai/api/v1", "model": "openai/gpt-4o-mini", "key_env": "OPENROUTER_API_KEY"},
+    # Ollama — free local inference; run `ollama serve` then `ollama pull llama3.2`
+    "ollama": {"base_url": "http://localhost:11434/v1", "model": "llama3.2", "key_env": None},
 }
 LLM_PROVIDER = os.environ.get("RAGBOT_LLM_PROVIDER", "openai")
 LLM_TIMEOUT_S = 60
