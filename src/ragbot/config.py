@@ -146,6 +146,18 @@ RETRIEVAL_METHOD = "hybrid"  # method used by the pipeline: dense | bm25 | hybri
 REFUSAL_TEXT = "I don't know based on the provided documents."
 NO_LLM_NOTICE = "No LLM is configured ({hint}); showing the retrieved passages instead."
 
+# --- UI (D-014) ---
+UI_HOST = "127.0.0.1"  # local only; set to 0.0.0.0 deliberately to share
+UI_PORT = 7860
+UI_MIN_SECONDS_BETWEEN_QUESTIONS = 2.0  # per-session rate limit (cost/abuse, THREAT T4)
+UI_SNIPPET_CHARS = 260  # source text shown per retrieved chunk
+UI_EXAMPLES = [
+    "When did the Tokaido Shinkansen open?",
+    "Who built the 700T series for Taiwan?",
+    "Why do newer Shinkansen trains have long pointed noses?",
+    "When will the Chuo Shinkansen open?",
+]
+
 # --- Index (D-007) ---
 # Which chunk field each index reads: "embed_text" (heading path + text) or "text".
 DENSE_INDEX_FIELD = "embed_text"

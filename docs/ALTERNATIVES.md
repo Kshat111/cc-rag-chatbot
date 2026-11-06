@@ -35,3 +35,5 @@ Rejected options, and the condition under which to reconsider them.
 | D-012 | Running summary memory | Extra component to keep correct | Conversations regularly exceed 5 turns |
 | D-013 | No grounding instruction | Model answers from its own knowledge | Never |
 | D-013 | Score threshold before the LLM (refuse early) | Needs calibration on the eval; none done yet | A real run answers from weak retrieval |
+| D-014 | Streamlit | Second UI stack, reruns the script on each input | Gradio is unavailable on the target machine |
+| D-014 | Gradio ChatInterface | No side panel for query and sources | A plain chat is enough |

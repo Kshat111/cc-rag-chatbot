@@ -4,7 +4,7 @@ A retrieval-augmented chatbot over a small set (10–20) of source documents.
 Retrieval is hybrid: dense embeddings + BM25. Follow-up questions are rewritten
 using chat history before retrieval.
 
-> Status: indexing, retrieval, evaluation, and the CLI chat work; the Gradio UI is not written yet. See docs/HANDOVER.md.
+> Status: complete pipeline (ingest, chunk, index, hybrid retrieval, evaluation, CLI and Gradio chat). See docs/HANDOVER.md.
 
 ## Install
 
@@ -35,7 +35,7 @@ uv run python scripts/ask_retrieval.py "N700S" --method all   # retrieval only, 
 # 4. Run the evaluation set (eval/questions.jsonl), results go to eval/results/
 uv run python scripts/evaluate.py
 
-# 5. Launch the UI
+# 5. Launch the UI, then open http://127.0.0.1:7860
 uv run python -m ragbot.ui
 ```
 

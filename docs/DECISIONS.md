@@ -447,3 +447,30 @@ One entry per decision. Newest at the bottom.
   threshold would have stopped (record it in FAILURE.md); a local model has a context under ~4k
   tokens; or answers need to be longer than a few sentences.
 - **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
+
+### D-014: UI: Gradio chat with sources panel
+- **Date:** 2026-11-06
+- **Context:** The brief needs "a simple user interface"; the plan asks that it shows the answer
+  and the retrieved sources.
+- **Options:**
+  - A. Gradio `Blocks`: chat on the left; search query, status and cited sources on the right.
+  - B. Gradio `ChatInterface` (least code, no side panel without extra work).
+  - C. Streamlit; D. CLI only (already exists).
+- **Choice:** A with `gradio` (maintained by Hugging Face, Apache-2.0; added with `uv add`, version 6.31.0
+  in uv.lock; the user approved it, 2026-11-06). One `Chatbot` per browser session (history lives
+  in session state), the index and embedder are loaded once per process. Shows: the **rewritten
+  search query**, whether the model refused, invalid citations, and each retrieved chunk with its
+  heading path, a link to the exact Wikipedia revision, a text snippet, and a tick for cited ones.
+  Per-session limit of one question per `UI_MIN_SECONDS_BETWEEN_QUESTIONS` (2 s), input capped at
+  `MAX_QUERY_CHARS`, bound to 127.0.0.1 by default (`UI_HOST`). Launch: `uv run python -m ragbot.ui`.
+- **Why:** Showing the query and sources makes grounding and rewrite mistakes visible in the demo,
+  which is what the presentation needs to explain. B hides that behind the chat bubble.
+- **Trade-off:** gradio is a large dependency (pandas, pillow, fastapi, uvicorn, ...) and its API
+  changed between major versions (the code targets 6.x). The rate limit is per session, so a
+  script that opens many sessions bypasses it; no authentication. Retrieved text is rendered as
+  Markdown (Gradio sanitises HTML); Wikipedia text contains no links, but a different corpus could.
+  The browser rendering was not checked by eye in the build environment; the app was started and
+  driven through its API (HTTP 200, answer, sources, rate-limit message).
+- **Revisit if:** the UI is exposed beyond localhost (add auth and a global limit), or Gradio's
+  Markdown rendering of document text becomes an injection path.
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
