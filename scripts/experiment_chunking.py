@@ -19,7 +19,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from evaluate import KS, evaluate, evidence_groups, load_questions, summarize  # noqa: E402
+from evaluate import evaluate, evidence_groups, load_questions, summarize  # noqa: E402
 
 from ragbot import config  # noqa: E402
 from ragbot.chunking import ChunkConfig, chunk_documents  # noqa: E402
@@ -48,12 +48,22 @@ def scorable_ids(questions, chunks):
     return ok
 
 
-def run(docs, embedder, questions, configs, label):
-    """configs: list of (size, overlap). Returns (results, common_n)."""
-    built = {c: build(docs, embedder, *c) for c in configs}
+def run(docs, embedder, questions, configs, label, cache):
+    """configs: list of (size, overlap). Returns a dict: label, n_questions, common_ids, configs.
+
+    cache maps (size, overlap) -> (retriever, chunks), so a configuration that appears in two
+    sweeps (512/64) is chunked and embedded once.
+    """
+    for c in configs:
+        if c not in cache:
+            cache[c] = build(docs, embedder, *c)
+    built = {c: cache[c] for c in configs}
     per_cfg_ok = {c: scorable_ids(questions, built[c][1]) for c in configs}
     common = set.intersection(*per_cfg_ok.values())
     subset = [q for q in questions if q["id"] in common]
+    if not subset:
+        raise SystemExit(f"{label}: no question has its evidence inside a single chunk in every configuration "
+                         f"({configs}); the eval cannot compare these settings")
     results = []
     for c in configs:
         r, chunks = built[c]
@@ -85,13 +95,17 @@ def main():
     docs, questions, embedder = load_documents(), load_questions(), FastEmbedEmbedder()
 
     size_cfgs = [(s, config.CHUNK_OVERLAP) for s in config.CHUNK_SIZE_EXPERIMENTS]
-    blocks = [run(docs, embedder, questions, size_cfgs, "Size sweep, overlap fixed")]
+    cache = {}
+    blocks = [run(docs, embedder, questions, size_cfgs, "Size sweep, overlap fixed", cache)]
     print(table(blocks[0]), flush=True)
 
     best = max(blocks[0]["configs"], key=lambda r: r["metrics"]["hybrid"]["mrr"])["size"]
     for size in dict.fromkeys([config.CHUNK_SIZE, best]):
-        ov = [(size, o) for o in config.CHUNK_OVERLAP_EXPERIMENTS if o < size]
-        blocks.append(run(docs, embedder, questions, ov, f"Overlap sweep at size {size}"))
+        ov = [(size, o) for o in config.CHUNK_OVERLAP_EXPERIMENTS if o < size]  # overlap must be < size
+        if not ov:
+            print(f"\nOverlap sweep at size {size}: no overlap value below the size, skipped")
+            continue
+        blocks.append(run(docs, embedder, questions, ov, f"Overlap sweep at size {size}", cache))
         print("\n" + table(blocks[-1]), flush=True)
 
     if not args.no_save:
