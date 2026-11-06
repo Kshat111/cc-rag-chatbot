@@ -2,13 +2,14 @@
 stands in for fastembed. The real model is exercised only when
 RAGBOT_MODEL_TESTS=1 (see the last test)."""
 
-import hashlib
 import json
 import os
 from dataclasses import replace
 
 import numpy as np
 import pytest
+
+from fakes import FakeEmbedder
 
 from ragbot.chunking import ChunkConfig
 from ragbot.index import (
@@ -20,30 +21,6 @@ from ragbot.index import (
     load_dense_index,
     save_index,
 )
-
-
-class FakeEmbedder:
-    """Deterministic hashed bag-of-words vectors; 1 token per word plus 2 specials."""
-
-    def __init__(self, name="fake-model", dim=16, max_tokens=12, passage_prefix="", query_prefix="q: ", salt=""):
-        self.name, self.dim, self.max_tokens = name, dim, max_tokens
-        self.passage_prefix, self.query_prefix, self.salt = passage_prefix, query_prefix, salt
-
-    def _vec(self, text):
-        v = np.zeros(self.dim, dtype=np.float32)
-        for w in text.lower().split():
-            h = int(hashlib.md5((self.salt + w).encode()).hexdigest(), 16)
-            v[h % self.dim] += 1.0
-        return v
-
-    def embed_passages(self, texts):
-        return np.stack([self._vec(self.passage_prefix + t) for t in texts])
-
-    def embed_query(self, text):
-        return self._vec(self.query_prefix + text)
-
-    def count_tokens(self, texts):
-        return [len(t.split()) + 2 for t in texts]
 
 
 def chunk(i, text, path="Doc > A"):

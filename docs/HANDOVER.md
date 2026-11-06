@@ -1,6 +1,6 @@
 # Handover
 
-_Last updated: 2026-11-05 (Stage 3a, branch `stage-3-retrieval`, uncommitted)_
+_Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitted). Submission due ~8 h from start of 2026-11-06 session._
 
 ## Done
 - Project scaffold: directory layout, stub modules, CLAUDE.md, docs templates.
@@ -46,9 +46,32 @@ _Last updated: 2026-11-05 (Stage 3a, branch `stage-3-retrieval`, uncommitted)_
   - FAILURE.md chunk ids refreshed (+ F9: silent truncation, mitigated). 56 tests pass, 1 opt-in
     real-model test (`RAGBOT_MODEL_TESTS=1`) passes.
 
+- **Stage 3b: BM25 + hybrid (D-008, D-009).**
+  - `ragbot.retrieve`: `tokenize` (D-008 rules), `BM25` inverted index (k1 1.5, b 0.75, Lucene IDF),
+    `rrf_fuse` (weighted RRF, k 60, alpha 0.5, top-50 candidates), `Retriever` with
+    `dense_search` / `bm25_search` / `hybrid_search` -> `list[Hit(chunk_id, score, rank)]`.
+    Module-level functions use a shared Retriever loaded on first use.
+  - Config: `BM25_INDEX_FIELD`, `BM25_K1`, `BM25_B`, `RRF_K`, `HYBRID_CANDIDATES`, `RETRIEVAL_METHODS`.
+  - `scripts/ask_retrieval.py "query" --method dense|bm25|hybrid|all -k 3`.
+  - 27 tests in `tests/test_retrieve.py`; `FakeEmbedder` moved to `tests/fakes.py`. 83 passed, 1 skipped.
+  - 5 hand queries: BM25 wins exact terms (cost, 700T, N700S); dense wins the paraphrase
+    ("pointed noses"); hybrid lost two rank-2 dense answers (FAILURE F10, F11).
+  - Docs: DATA.md and ARCHITECTURE.md filled in for the current system.
+
+- **Stage 4: retrieval eval (D-010).** `scripts/evaluate.py` -> `eval/results/2026-11-06-retrieval.{json,md}`.
+  25 questions (q014-q025 drafted by Claude, quotes machine-checked, **owner must review answers**;
+  q001-q004 got evidence quotes), 19 scored. MRR: dense 0.810, BM25 0.634, hybrid a=0.5 0.765,
+  a=0.75 0.802. Recall@10: hybrid 1.000, dense 0.947, BM25 0.895. Hybrid does not beat dense on MRR.
+  Not blind: drafted after seeing 5 hand queries (stated in D-010). 86 tests pass.
+
 ## In progress
-- Stage 3a done, **waiting for review**. Do not start 3b (BM25, retrieve.py, hybrid; D-008, D-009)
-  until approved.
+- Compressed plan for the deadline (agreed 2026-11-06), one row at a time, commit + tag after each:
+  1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. Stages 5–6: OpenAI-compatible LLM client over urllib (no SDK) with a
+  no-key fallback that returns retrieved passages, history rewrite, grounded prompt, `ask.py`.
+  4. Stage 8: Gradio UI (approved) + README from a clean clone. 5. Docs: THREAT, FAILURE, DATA
+  history section, HANDOVER. 6. User: DEFENSE.md, slides.
+- Cut for time: table fetching (D-002 revisit), overlap experiments, LLM-judge faithfulness.
+- Commits: never add a Co-Authored-By / AI attribution line (user rule, 2026-11-06).
 
 ## Broken / known issues
 - Pipeline modules other than ingest and chunking still raise NotImplementedError (by design).
@@ -71,10 +94,7 @@ _Last updated: 2026-11-05 (Stage 3a, branch `stage-3-retrieval`, uncommitted)_
   the exponent rule with `<sup>` rendering (D-005 "revisit if"); fill q005/q006 expected answers;
   re-check FAILURE.md F1, F2, F4; chunk ids in FAILURE.md will shift.
 - Decide whether to rebalance the corpus (missing JR Hokkaido/Shikoku/Kyushu, Kyushu/Hokkaido Shinkansen; Chūō Shinkansen vs SCMaglev overlap).
-- **Stage 3b (after 3a review):** own BM25 (D-008; tokenization: accent stripping, apostrophe
-  removal, number normalisation, model-name stems, Japanese single characters), `BM25_INDEX_FIELD`
-  switch (default `embed_text`), `retrieve.py` with `Hit(chunk_id, score, rank)`, weighted RRF
-  hybrid (D-009, k=60, alpha 0.5). Then five example queries per method.
+- **Next row:** Stages 5-6: LLM client (OpenAI-compatible, urllib), history rewrite, grounded prompt, `ask.py`.
 - Experiments planned in D-004: size 128/256/512 (384 optional); overlap 0/32/64/128 at best
   size; heading prepend on/off; query instruction on/off; fixed-size baseline. Fixed overlap 64
   is 50% of a 128-token chunk and 12.5% of 512, so the size experiment is not "size only".

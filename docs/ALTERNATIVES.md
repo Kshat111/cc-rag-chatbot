@@ -20,3 +20,12 @@ Rejected options, and the condition under which to reconsider them.
 | D-007 | Approximate search (HNSW/IVF) | No benefit at 249 vectors; costs recall | >~100k vectors or latency over budget |
 | D-004 result | Keep chars/4, shrink CHUNK_SIZE to ~400 or CHARS_PER_TOKEN to ~2.1 | Shrinks every chunk to cover a +92% worst case; 75% of chunks were already overestimated | No access to the model's tokenizer |
 | D-004 result | Split oversized chunks inside build_index | Stored chunks would differ from chunker output (breaks D-007) | Never |
+| D-008 | rank-bm25 | Unmaintained since 2022; still needs our tokenizer | Corpus passes ~50k chunks |
+| D-008 | bm25s | No licence shown on PyPI; still needs our tokenizer | Licence confirmed and corpus passes ~50k chunks |
+| D-008 | Japanese character bigrams | Not needed: Japanese only appears in parenthesised names | Japanese queries become a requirement or return noisy hits |
+| D-008 | Morphological analyser (e.g. MeCab) | New dependency for 902 characters | Japanese text becomes a real part of the corpus |
+| D-008 | Model-name stems on the query side too | "N700S" would also match N700A | Users expect a variant to find its siblings |
+| D-009 | Weighted sum of normalised scores | Min-max is unstable per query; α means different things per query | RRF dilutes a confidently right method |
+| D-009 | Plain RRF | No dial for the dense vs BM25 experiments | Never (α = 0.5 already equals it) |
+| D-010 | Hand-written gold chunk ids | Break on every re-chunk | Never at this corpus size |
+| D-010 | LLM judge for retrieval relevance | Costs a key, can be wrong, not needed for recall@k | Gold quotes stop being findable (heavy paraphrase) |

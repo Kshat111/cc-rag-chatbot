@@ -4,7 +4,8 @@ Usage: uv run python scripts/build_index.py
 
 Re-chunks from data/raw/ on every run, so the index always reflects the
 current config. Exits 1 without writing anything if any chunk exceeds the
-embedding model's real token limit. BM25 is added in stage 3b.
+embedding model's real token limit. BM25 is not saved: retrieve.Retriever
+rebuilds it from chunks.jsonl at load (D-008).
 """
 
 import sys

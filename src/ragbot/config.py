@@ -110,9 +110,17 @@ INDEX_CHUNKS_PATH = CHUNKS_DUMP_PATH  # row i of the vectors = line i of this fi
 DENSE_VECTORS_PATH = INDEX_DIR / "dense.npy"
 INDEX_META_PATH = INDEX_DIR / "index_meta.json"
 
-# --- Retrieval ---
+# --- Retrieval (D-008 BM25, D-009 hybrid) ---
 TOP_K = 5
-HYBRID_ALPHA = 0.5  # weight of dense vs BM25 in hybrid fusion; 1.0 = dense only
+# BM25 is rebuilt in memory from INDEX_CHUNKS_PATH at load (milliseconds), never saved.
+BM25_INDEX_FIELD = "embed_text"  # "embed_text" (heading path + text) or "text"
+BM25_K1 = 1.5  # term-frequency saturation
+BM25_B = 0.75  # length normalisation (0 = none, 1 = full)
+# Weighted reciprocal rank fusion: alpha/(RRF_K + rank_dense) + (1 - alpha)/(RRF_K + rank_bm25)
+HYBRID_ALPHA = 0.5  # 1.0 = dense order only, 0.0 = BM25 order only
+RRF_K = 60  # standard constant (Cormack et al., 2009)
+HYBRID_CANDIDATES = 50  # top-n taken from each method before fusing
+RETRIEVAL_METHODS = ("dense", "bm25", "hybrid")
 
 # --- Generation ---
 TEMPERATURE = 0.0

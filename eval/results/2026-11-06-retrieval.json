@@ -1,0 +1,1238 @@
+{
+  "date": "2026-11-06T06:48:59+00:00",
+  "config": {
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "dense_field": "embed_text",
+    "chunk_config": {
+      "size": 512,
+      "overlap": 64,
+      "min_size": 64,
+      "unit": "model_tokens",
+      "chars_per_token": 4.0,
+      "prepend_headings": true,
+      "tokenizer": "Qdrant/bge-small-en-v1.5-onnx-Q",
+      "passage_prefix": ""
+    },
+    "n_chunks": 248,
+    "bm25_field": "embed_text",
+    "bm25_k1": 1.5,
+    "bm25_b": 0.75,
+    "rrf_k": 60,
+    "hybrid_candidates": 50,
+    "query_prefix": "Represent this sentence for searching relevant passages: "
+  },
+  "n_scored": 19,
+  "skipped": [
+    [
+      "q005",
+      "table",
+      "not answerable_now"
+    ],
+    [
+      "q006",
+      "table",
+      "not answerable_now"
+    ],
+    [
+      "q013",
+      "unanswerable",
+      "not answerable_now"
+    ],
+    [
+      "q023",
+      "unanswerable",
+      "not answerable_now"
+    ],
+    [
+      "q024",
+      "unanswerable",
+      "not answerable_now"
+    ],
+    [
+      "q025",
+      "unanswerable",
+      "not answerable_now"
+    ]
+  ],
+  "summary": {
+    "dense": {
+      "n": 19,
+      "mrr": 0.8101503759398496,
+      "recall@3": 0.7982456140350878,
+      "recall@5": 0.868421052631579,
+      "recall@10": 0.9473684210526315
+    },
+    "bm25": {
+      "n": 19,
+      "mrr": 0.6342105263157894,
+      "recall@3": 0.6842105263157895,
+      "recall@5": 0.8157894736842105,
+      "recall@10": 0.8947368421052632
+    },
+    "hybrid a=0.0": {
+      "n": 19,
+      "mrr": 0.6342105263157894,
+      "recall@3": 0.6842105263157895,
+      "recall@5": 0.8157894736842105,
+      "recall@10": 0.8947368421052632
+    },
+    "hybrid a=0.25": {
+      "n": 19,
+      "mrr": 0.7035087719298245,
+      "recall@3": 0.8157894736842105,
+      "recall@5": 0.868421052631579,
+      "recall@10": 0.8947368421052632
+    },
+    "hybrid a=0.5": {
+      "n": 19,
+      "mrr": 0.7649749373433584,
+      "recall@3": 0.8157894736842105,
+      "recall@5": 0.8157894736842105,
+      "recall@10": 1.0
+    },
+    "hybrid a=0.75": {
+      "n": 19,
+      "mrr": 0.8021929824561403,
+      "recall@3": 0.7456140350877193,
+      "recall@5": 0.868421052631579,
+      "recall@10": 1.0
+    },
+    "hybrid a=1.0": {
+      "n": 19,
+      "mrr": 0.8101503759398496,
+      "recall@3": 0.7982456140350878,
+      "recall@5": 0.868421052631579,
+      "recall@10": 0.9473684210526315
+    }
+  },
+  "per_question": [
+    {
+      "id": "q001",
+      "type": "conflict",
+      "query": "When is the Chūō Shinkansen expected to open between Tokyo and Nagoya?",
+      "gold": [
+        "chuo-shinkansen#0000",
+        "shinkansen#0018",
+        "shinkansen#0046"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q002",
+      "type": "near_duplicate",
+      "query": "Why has JR Central refused to build a Tokaido Shinkansen station at Shizuoka Airport?",
+      "gold": [
+        "tokaido-shinkansen#0009"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q003",
+      "type": "recency",
+      "query": "Where will the Hokuriku Shinkansen's Kyoto station be, according to the July 2026 decision?",
+      "gold": [
+        "hokuriku-shinkansen#0000"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q004",
+      "type": "keyword_list",
+      "query": "Which transportation companies belong to the JR Central Group?",
+      "gold": [
+        "central-japan-railway-company#0003"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q007",
+      "type": "number",
+      "query": "What was the actual construction cost of the Tokaido Shinkansen?",
+      "gold": [
+        "shinkansen#0005",
+        "shinkansen#0006",
+        "tokaido-shinkansen#0002"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q008",
+      "type": "keyword",
+      "query": "Who built the 700T series for Taiwan?",
+      "gold": [
+        "shinkansen#0053"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q009",
+      "type": "paraphrase",
+      "query": "Why do newer Shinkansen trains have such long pointed noses?",
+      "gold": [
+        "shinkansen#0001"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 8,
+          "mrr": 0.125,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 4,
+          "mrr": 0.25,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q010",
+      "type": "two_chunk",
+      "query": "Why did Hideo Shima leave JNR in 1963, and who left with him?",
+      "gold": [
+        "hideo-shima#0002",
+        "tokaido-shinkansen#0002"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 7,
+          "mrr": 0.14285714285714285,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 0.5,
+          "recall@5": 0.5,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 6,
+          "mrr": 0.16666666666666666,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 7,
+          "mrr": 0.14285714285714285,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q011",
+      "type": "multi_turn",
+      "query": "Why did Hideo Shima, chief engineer of the Tokaido Shinkansen, resign?",
+      "gold": [
+        "tokaido-shinkansen#0002"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "bm25": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 5,
+          "mrr": 0.2,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 7,
+          "mrr": 0.14285714285714285,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 8,
+          "mrr": 0.125,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        }
+      }
+    },
+    {
+      "id": "q012",
+      "type": "partial",
+      "query": "What was Tokaido Shinkansen ridership in each year since 2010?",
+      "gold": [
+        "shinkansen#0007",
+        "tokaido-shinkansen#0008"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.6666666666666666,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.6666666666666666,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 0.6666666666666666,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q014",
+      "type": "number",
+      "query": "What was the average delay of Tokaido Shinkansen trains in fiscal 2019?",
+      "gold": [
+        "tokaido-shinkansen#0000"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q015",
+      "type": "number",
+      "query": "When was the UrEDAS earthquake warning system introduced?",
+      "gold": [
+        "shinkansen#0039"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q016",
+      "type": "number",
+      "query": "What speed record does the SCMaglev L0 Series hold?",
+      "gold": [
+        "scmaglev#0000"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q017",
+      "type": "number",
+      "query": "When did the Hokuriku Shinkansen extension from Kanazawa to Tsuruga open?",
+      "gold": [
+        "hokuriku-shinkansen#0000",
+        "hokuriku-shinkansen#0008"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q018",
+      "type": "number",
+      "query": "On what date was JNR privatized?",
+      "gold": [
+        "japanese-national-railways#0005"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 5,
+          "mrr": 0.2,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 5,
+          "mrr": 0.2,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 3,
+          "mrr": 0.3333333333333333,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q019",
+      "type": "keyword",
+      "query": "Where was Hideo Shima born?",
+      "gold": [
+        "hideo-shima#0000"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q020",
+      "type": "paraphrase",
+      "query": "How do Shinkansen trains react when the ground starts shaking?",
+      "gold": [
+        "shinkansen#0039"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 4,
+          "mrr": 0.25,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": null,
+          "mrr": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 0.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 10,
+          "mrr": 0.1,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 5,
+          "mrr": 0.2,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 4,
+          "mrr": 0.25,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q021",
+      "type": "paraphrase",
+      "query": "Has anyone been killed in a Shinkansen crash or derailment?",
+      "gold": [
+        "shinkansen#0034"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 4,
+          "mrr": 0.25,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 4,
+          "mrr": 0.25,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 2,
+          "mrr": 0.5,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    },
+    {
+      "id": "q022",
+      "type": "paraphrase",
+      "query": "Which Shinkansen model was the first one sold to a foreign country?",
+      "gold": [
+        "shinkansen#0053"
+      ],
+      "methods": {
+        "dense": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "bm25": {
+          "first_gold_rank": 10,
+          "mrr": 0.1,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.0": {
+          "first_gold_rank": 10,
+          "mrr": 0.1,
+          "recall@3": 0.0,
+          "recall@5": 0.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.25": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.5": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=0.75": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        },
+        "hybrid a=1.0": {
+          "first_gold_rank": 1,
+          "mrr": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "recall@10": 1.0
+        }
+      }
+    }
+  ]
+}

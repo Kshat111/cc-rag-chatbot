@@ -235,3 +235,127 @@ One entry per decision. Newest at the bottom.
   stored vectors, so the on/off experiment needs no rebuild.
 - **Revisit if:** more than ~100k vectors or query latency over budget.
 - **Model:** Claude Opus 5.5 (claude-opus-5-5) (proposed), human (approved)
+
+### D-008: BM25 implementation and tokenization
+- **Date:** 2026-11-06
+- **Context:** Dense search (D-006) is weak on exact identifiers: model names
+  (`N700A` in 14 chunks, `N700S` in 7, `700T` in 1), years, speeds, and
+  romanised names written two ways ("Tōkaidō"/"Tokaido", "San'yō"/"Sanyo").
+  36 of 248 chunks contain Japanese characters (902 in total), almost all in
+  parenthesised names. 95 chunks contain apostrophes. No new dependency.
+- **Options:**
+  - A. Own Okapi BM25 (~100 lines, numpy only, already installed).
+  - B. `rank-bm25` (Apache-2.0): last release 2022; still needs our tokenizer.
+  - C. `bm25s`: active, but PyPI shows no licence; still needs our tokenizer.
+  - Japanese text: C1. one token per character; C2. character bigrams
+    (Lucene CJKAnalyzer style); C3. a morphological analyser (new dependency).
+  - Model-name stems: S1. added on both index and query side; S2. added on
+    the index side only.
+- **Choice:** A with C1 and S2.
+  - Okapi BM25, `k1=1.5`, `b=0.75`, Lucene IDF `ln(1 + (N − df + 0.5)/(df + 0.5))`
+    (never negative). Built in memory from `chunks.jsonl` at load, not saved.
+  - Indexed field set by `BM25_INDEX_FIELD` (default `embed_text`, same as dense).
+  - Tokenizer, applied the same way to chunks and queries except for stems:
+    1. NFKD, drop combining marks, lowercase (`Tōkaidō` → `tokaido`). Latin
+       characters only: on Japanese, NFKD would turn ガ into カ + a mark.
+    2. Drop a possessive `'s` (`Shinkansen's` → `shinkansen`), then remove other
+       apostrophes `'` `’` `ʼ` before splitting (`San'yō` → `sanyo`).
+    3. Remove commas between digits (`1,435` → `1435`); keep decimals (`5.3`).
+    4. Split on everything else that is not a letter or digit
+       (`Shin-Osaka` → `shin`, `osaka`; `km/h` → `km`, `h`).
+    5. Hiragana, katakana and CJK ideographs: one token per character.
+    6. Index side only: a token of optional letters + digits + letters also
+       adds its letters-plus-digits stem (`n700a` → `n700a`, `n700`;
+       `700t` → `700t`, `700`; `1960s` → `1960s`, `1960`). A query keeps
+       its token as typed, so "N700" finds N700A and N700S, but "N700S" does
+       not find N700A, and "N700" never matches a bare "700".
+    7. No stopwords, no stemming.
+    8. Each distinct query term counts once ("N700 N700" = "N700").
+- **Why:** The tokenizer is the real work and a library would still need it.
+  Stems on the index side only keep queries precise: a query for one variant
+  doesn't pull in its siblings, and a query for the family finds all of them.
+  Single characters need no dependency; IDF makes characters common across
+  the Japanese names (新 appears in 16 chunks, 線 in 14) cheap, and the
+  rare ones carry the match.
+- **Trade-off:** Single characters ignore word boundaries, so 東海道 also
+  partly matches any chunk containing 東 or 海. A query "700T" won't match
+  a chunk that only says "700 Series". "1st"/"5th" add bare-number stems that
+  can match unrelated numbers in a query (e.g. "5 minutes" vs "5th"). No
+  stemming, so "train" doesn't match "trains" in BM25 (dense covers that).
+- **Implementation notes (2026-11-06):** rules 1, 2 and 8 refined while coding
+  (Latin-only accent stripping, possessive handling, unique query terms); 27 tests
+  in `tests/test_retrieve.py`.
+- **First observation (2026-11-06, 5 hand queries, not the eval):** BM25 alone
+  ranks the answer first for exact-term questions ("actual construction cost" →
+  shinkansen#0006 "actual cost was about 380 billion yen"; "700T" →
+  shinkansen#0053; "N700S" → all top 3 contain N700S), and misses the paraphrase
+  "long pointed noses" (the text says "elongated … nose profiles").
+- **Revisit if:** Japanese queries become a requirement or return noisy hits
+  (try C2), the eval shows misses on inflected forms (add a light stemmer),
+  or the corpus passes ~50k chunks (scipy sparse matrices or B/C).
+- **Model:** Claude Opus 5.5 (claude-opus-5-5) (proposed), human (approved)
+
+### D-009: Hybrid fusion
+- **Date:** 2026-11-06
+- **Context:** Dense (bge-small-en-v1.5 cosine, bounded, typically a narrow
+  band; to be measured on real queries) and BM25 (unbounded, grows with query
+  length) scores are not on the same scale. The experiments need a dense-only to BM25-only dial.
+- **Options:**
+  - A. Weighted reciprocal rank fusion:
+    `score = α/(k + rank_dense) + (1 − α)/(k + rank_bm25)`.
+  - B. Weighted sum of per-query min-max normalised scores.
+  - C. Plain RRF (no weight).
+- **Choice:** A, with `RRF_K = 60` (Cormack et al., 2009), `HYBRID_ALPHA = 0.5`,
+  over the top `HYBRID_CANDIDATES = 50` from each method. A chunk missing from
+  one method's candidates gets 0 from that method. Chunks with a total score
+  of 0 are dropped. Ties break by chunk order, so results are deterministic.
+  At α = 0.5 the ranking equals plain RRF; α = 1 reproduces dense-only order
+  and α = 0 BM25-only order.
+- **Why:** Ranks need no normalisation, so α means the same thing for every
+  query. One constant, the standard value.
+- **Trade-off:** Throws away how confident each method is: a BM25 hit far
+  ahead of the rest counts the same as a narrow win. At α = 0.5 hybrid scores
+  run from 0.0045 (rank 50 in one method only) to 0.0164 (rank 1 in both) and
+  are only comparable within one query.
+- **First observation (2026-11-06, 5 hand queries, not the eval):** hybrid kept
+  the right chunk in its top 3 for the cost and 700T questions, but **lost two
+  answers dense had at rank 2**: "pointed noses" (shinkansen#0001, BM25 rank >3)
+  and "When will the Chuo Shinkansen open?" (chuo-shinkansen#0000). RRF favours
+  chunks that are moderately good in both lists over one method's strong hit.
+  Whether that costs recall overall is for the Stage 4 eval to decide (alpha sweep).
+- **Revisit if:** the eval shows one method confidently right while RRF
+  dilutes it (try B), or the best α found by the experiments sits at 0 or 1
+  (then hybrid isn't paying for itself).
+- **Model:** Claude Opus 5.5 (claude-opus-5-5) (proposed), human (approved)
+
+### D-010: Retrieval evaluation metrics and gold labels
+- **Date:** 2026-11-06
+- **Context:** The brief needs at least one metric and a comparison of two retrieval
+  approaches. The eval set has 25 questions; 19 are scorable for retrieval.
+- **Options:**
+  - A. Gold = chunk ids written by hand per question.
+  - B. Gold = chunks whose text contains the question's `evidence` quote.
+  - C. LLM judge decides relevance.
+- **Choice:** B, with recall@3/5/10 and MRR (`scripts/evaluate.py`). One evidence quote =
+  one group of chunks (a quote can sit in two overlapping chunks); recall@k is the share
+  of groups hit in the top k; MRR uses the first chunk in any group. Multi-turn questions
+  are retrieved with the last turn's `expected_rewrite`, so retrieval is measured apart
+  from rewriting. Skipped: `answerable_now: false` (tables, unanswerable), which belong to
+  generation metrics. Results saved to `eval/results/<date>-retrieval.{json,md}`.
+- **Why:** Ids change whenever chunking changes (size, overlap, tables), quotes do not,
+  so the same eval compares chunk configurations. No judge to be wrong.
+- **Trade-off:** A quote that is paraphrased in another chunk is not counted as gold
+  (understates recall); two quotes in one chunk count as separate groups.
+  19 questions: one question moves MRR by about 0.05, so differences under ~0.05 are noise.
+  Questions q014–q025 and the evidence for q001–q004 were drafted by Claude **after** seeing
+  five hand-run retrievals (q007–q011), so the set is not blind to the system; quotes are
+  machine-checked against data/raw, answers still need the owner's review.
+- **Result (2026-11-06, 248 chunks, bge-small, query instruction on):**
+  dense MRR 0.810, recall@3/5/10 = .798/.868/.947; BM25 0.634, .684/.816/.895;
+  hybrid α=0.5 0.765, .816/.816/1.000; hybrid α=0.75 0.802, .746/.868/1.000.
+  Dense wins MRR; hybrid reaches recall@10 = 1.0 (nothing lost entirely) but pushes
+  exact hits down. BM25 wins the two-chunk question (q010, rank 1 vs dense 7) and loses
+  paraphrases (q009, q020 not in its top 10).
+- **Revisit if:** the eval grows past ~40 questions, quotes stop matching after re-fetching
+  tables, or generation metrics need chunk-level gold ids.
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
