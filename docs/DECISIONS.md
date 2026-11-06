@@ -127,6 +127,7 @@ One entry per decision. Newest at the bottom.
   CHUNK_SIZE, or the estimator is off by more than 25% against the real
   tokenizer.
 - **Model:** Claude Opus 5.5 (proposed), human (approved)
+- **Experiment result (2026-11-06): see D-015** (512 beats 256 and 128; overlap 0/32/64/128 within noise).
 - **Result (2026-11-05):** revisit condition met. Measured against the
   bge-small tokenizer: 4.30 chars/token overall (so chars/4 overcounts on
   average, median chunk −9%), but the worst case is +92% (Japanese-heavy
@@ -499,4 +500,42 @@ One entry per decision. Newest at the bottom.
   driven through its API (HTTP 200, answer, sources, rate-limit message).
 - **Revisit if:** the UI is exposed beyond localhost (add auth and a global limit), or Gradio's
   Markdown rendering of document text becomes an injection path.
+- **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
+
+### D-015: Chunk size and overlap experiments, result
+- **Date:** 2026-11-06
+- **Context:** The brief asks to explain the chunk size and overlap decisions; D-004 gave the reasoning
+  (512 tokens = the embedding model's limit, 64 = whole sentences, one section) but no measurement.
+- **Hypothesis (the plan's example, written before running):** smaller chunks improve precision but lose context.
+- **Method:** `scripts/experiment_chunking.py` rebuilds chunks and the dense index in memory for each
+  configuration (the saved index is untouched) and runs the D-010 eval. Gold chunks come from evidence quotes,
+  so they follow the chunking. 19 scored questions; a question is used only if its evidence fits in one chunk in
+  every compared configuration (here none were lost). Hybrid uses `HYBRID_ALPHA` 0.75. Min chunk size 64.
+- **Result, size sweep (overlap 64):**
+
+  | size | chunks | dense R@5 / MRR | BM25 R@5 / MRR | hybrid R@5 / MRR | hybrid R@10 |
+  |---|---|---|---|---|---|
+  | 128 | 743 | .763 / .661 | .737 / .641 | .763 / .691 | .895 |
+  | 256 | 354 | .789 / .697 | .816 / .709 | .816 / .692 | .947 |
+  | **512** | 248 | **.868 / .810** | .816 / .634 | **.868 / .802** | **1.000** |
+- **Result, overlap sweep (size 512):**
+
+  | overlap | chunks | dense R@5 / MRR | hybrid R@5 / MRR |
+  |---|---|---|---|
+  | 0 | 247 | .921 / .813 | .921 / .779 |
+  | 32 | 247 | .895 / .813 | .921 / .778 |
+  | 64 | 248 | .868 / .810 | .868 / .802 |
+  | 128 | 249 | .842 / .797 | .868 / .801 |
+- **Takeaways:** (1) The hypothesis is **not supported on this eval**: larger chunks win clearly, 128 is worst on
+  every method (the small chunks split the facts and context a question needs, and the corpus has many near-duplicate
+  sections competing). Keep 512. (2) Overlap has **no measurable effect**: dense R@5 differs by one question
+  (1/19 = .053) between 0 and 64, MRR is flat, and the chunk count barely changes (247-249) because overlap is
+  whole sentences within a section and only applies at some splits. Overlap 0 is not worse; 64 is kept for
+  cases where an answer straddles a boundary, which this eval cannot show. (3) 1024 is not testable with
+  bge-small (512-token limit, D-004 note).
+- **Trade-off / limits:** 19 questions, so a difference under ~0.05 is noise. The eval mostly asks one-fact lookups,
+  which favour the chunk that holds the whole fact; questions that need long context could favour other sizes.
+  The set was drafted after seeing some retrieval output (D-010). Size and overlap were tested separately, not as a grid.
+- **Revisit if:** the eval gains many multi-sentence "explain" questions, tables return (D-002 revisit), or the embedding
+  model changes to one with a longer input limit (test 1024).
 - **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)

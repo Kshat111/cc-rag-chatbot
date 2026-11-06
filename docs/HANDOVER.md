@@ -87,6 +87,10 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
     far is thin (eval: dense MRR .810 vs .802; live F16 favours dense). Add the "when did Shinkansen
     start?" question to the eval and re-run before deciding.
 
+- **Chunk experiments (D-015):** `scripts/experiment_chunking.py` -> `eval/results/2026-11-06-chunking.{json,md}`.
+  512 > 256 > 128 on every method (hybrid MRR .802/.692/.691, R@10 1.0/.947/.895); overlap 0/32/64/128 within noise.
+  Defaults unchanged (512/64). Hypothesis "smaller is better" not supported. ~3 min to run; index untouched.
+
 ## In progress
 - Compressed plan for the deadline (agreed 2026-11-06), one row at a time, commit + tag after each:
   1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. ~~Stages 5-6~~ built; Ollama live, OpenAI pending credits.

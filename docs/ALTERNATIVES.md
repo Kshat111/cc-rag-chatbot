@@ -37,3 +37,5 @@ Rejected options, and the condition under which to reconsider them.
 | D-013 | Score threshold before the LLM (refuse early) | Needs calibration on the eval; none done yet | A real run answers from weak retrieval |
 | D-014 | Streamlit | Second UI stack, reruns the script on each input | Gradio is unavailable on the target machine |
 | D-014 | Gradio ChatInterface | No side panel for query and sources | A plain chat is enough |
+| D-015 | Chunk size 128 or 256 | Lower recall@5 and MRR than 512 on every method | Eval gains questions that need a narrow passage, or tables return |
+| D-015 | Overlap 0, 32 or 128 | No measurable difference (within one question); 128 is slightly worse | A boundary-straddling-answer question is added to the eval |

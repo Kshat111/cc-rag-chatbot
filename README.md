@@ -38,6 +38,9 @@ uv run python -m ragbot.ui
 # 4. Evaluate retrieval (eval/questions.jsonl): recall@k and MRR, saved to eval/results/
 uv run python scripts/evaluate.py
 
+# 4b. Chunk size / overlap experiments (in memory, ~3 min; does not touch data/index)
+uv run python scripts/experiment_chunking.py
+
 # 5. Unit tests (no model download, no network)
 uv run --with pytest pytest -q
 
