@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 
 from ragbot import config
-from ragbot.generate import build_messages, generate_answer, is_refusal, select_chunks
+from ragbot.generate import build_messages, generate_answer, is_empty, is_refusal, select_chunks
 from ragbot.history import Turn, rewrite_query, trim_history
 from ragbot.llm import ChatClient, LLMError, LLMNotConfigured
 
@@ -18,6 +18,8 @@ class Answer:
     cited: list = field(default_factory=list)
     invalid_citations: list = field(default_factory=list)  # cited ids that were not in the context
     refused: bool = False
+    uncited: bool = False  # a real answer with no citation that matches the context
+    empty: bool = False  # the model returned only a citation/header, no answer
     used_llm: bool = True
     error: str = ""
 
@@ -67,6 +69,10 @@ class Chatbot:
             ans.error, ans.text, ans.used_llm = str(e), f"The LLM call failed: {e}", False
             return ans
         ans.refused = is_refusal(ans.text)
+        ans.empty = not ans.refused and is_empty(ans.text)
+        ans.uncited = not ans.refused and not ans.empty and not ans.cited
+        if ans.empty:
+            return ans  # a non-answer must not become history that later rewrites build on
         self.history.append(Turn(question, ans.text))
         self.history = trim_history(self.history)
         return ans

@@ -36,6 +36,10 @@ def format_status(ans):
         parts.append(f"**Search query:** {ans.query}")
     if ans.refused:
         parts.append("🚫 The model said the documents don't contain the answer.")
+    if ans.empty:
+        parts.append("⚠️ The model returned no real answer (only a citation or header). Try a stronger model.")
+    if ans.uncited:
+        parts.append("⚠️ This answer has no valid citation: treat it as unverified.")
     if ans.invalid_citations:
         parts.append(f"⚠️ Cited ids that were not in the context: {', '.join(ans.invalid_citations)}")
     if not ans.used_llm:

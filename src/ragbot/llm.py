@@ -13,6 +13,10 @@ import urllib.request
 from ragbot import config
 
 
+# Wording differs by provider ("quota", "no credits remaining", "billing"); none of it clears by waiting.
+_OUT_OF_FUNDS = ("quota", "credit", "billing", "insufficient")
+
+
 class LLMError(Exception):
     """The LLM call failed (network, HTTP error, or an unexpected response shape)."""
 
@@ -55,9 +59,13 @@ class ChatClient:
                 data = json.loads(self.post(url, headers, body, config.LLM_TIMEOUT_S))
                 return data["choices"][0]["message"]["content"].strip()
             except urllib.error.HTTPError as e:
-                last = f"HTTP {e.code}"
-                if e.code not in (429, 500, 502, 503, 504):
-                    raise LLMError(f"{last} from {self.settings['provider']}: {_error_text(e)}") from e
+                detail = _error_text(e)
+                last = f"HTTP {e.code}: {detail}"
+                # 429 normally means "slow down" and is worth retrying; but "out of quota/credits"
+                # never clears by waiting, so fail at once with the provider's message.
+                permanent = e.code not in (429, 500, 502, 503, 504) or any(w in str(detail).lower() for w in _OUT_OF_FUNDS)
+                if permanent:
+                    raise LLMError(f"{last} (provider {self.settings['provider']})") from e
             except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
                 last = f"network error: {getattr(e, 'reason', e)}"
             except (KeyError, IndexError, TypeError, ValueError) as e:

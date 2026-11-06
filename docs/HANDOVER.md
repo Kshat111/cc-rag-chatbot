@@ -71,20 +71,25 @@ _Last updated: 2026-11-06 (Stage 3b done, branch `stage-3-retrieval`, uncommitte
     `scripts/ask.py` (single question, interactive chat, `--show-prompt`, `--provider`).
   - `HYBRID_ALPHA` 0.5 -> 0.75 (tuned on the eval set; noted in D-009).
   - 23 tests in `tests/test_llm_pipeline.py`; 109 pass. Docs: THREAT.md filled, FAILURE F12-F14, README LLM section.
-  - **Not verified live:** no API key and no Ollama in the build environment, so no real LLM
-    output exists yet. Verified for real: the no-key path and the exact prompt (`--show-prompt`).
-    **To do with a key:** the 3-turn conversation, one unanswerable refusal, one planted-injection
-    test, and a real out-of-context answer (needed for the presentation).
-
-- **Stage 8: Gradio UI + README (D-014).** `ragbot.ui` (chat, search query, cited sources with revision
-  links, refusal/invalid-citation flags, per-session 2 s rate limit); `gradio` 6.31.0 added.
-  112 tests pass. **README verified from a clean clone** (scratchpad, committed state): `uv sync`, build
-  (248 chunks, max 510 tokens, 37 s), ask (no key), ask_retrieval, evaluate (same table as before), UI HTTP 200, tests.
-  Not done: UI looked at in a real browser; `pytest` is not a declared dev dependency (README uses `uv run --with pytest`).
+  - **Live status:** Ollama `llama3.2` works (user-run, 2026-11-06). OpenAI key valid but account has
+    no credits (HTTP 429), so OpenAI is not verified live. First live finding: the model echoed a passage
+    header (F15) -> prompt format + empty-answer check (D-013 notes); same question then answered
+    "debuted by JNR in 1964 [japanese-national-railways#0002]". F16: hybrid dropped the exact-date chunk
+    that dense ranked 2nd for "when did Shinkansen start?".
+  - **Live results so far (llama3.2, user-run):** refused TGV, Shanghai maglev and Nozomi fare questions (F12); N700S speed = 260 km/h with a non-existent citation id (F17, scope error); 700T 300 km/h correct (F18, was a mislabelled probe); W7 speed: line limit attributed to the train with a non-supporting citation (F19); seat-count question correctly refused.
+  - **Full live run by Claude (Ollama llama3.2, 14 questions, 2026-11-06):** details in D-013 and FAILURE F19-F23.
+    Works: multi-turn rewrites + answers, opening date, Hokkaido, 2 of 2 out-of-corpus refusals. Fails: W7 speed,
+    "when did Shinkansen start?" (memory + fake support, F20), injection (F21), Chuo (F22). New `uncited` warning.
+    Test script (not in repo): scratchpad live_tests.py; **Groq/OpenAI/Grok not run** (no key in Claude's environment).
+  - **Still to run live and record:** the same set on a stronger model (Groq/OpenAI; user must run, keys), and the planted-injection-in-a-document test.
+  - **Uncommitted at time of writing:** the F15 fix, 429 handling, FAILURE F15/F16, these notes.
+  - **Open decision:** default retrieval for the pipeline (hybrid alpha 0.75 vs dense-only); evidence so
+    far is thin (eval: dense MRR .810 vs .802; live F16 favours dense). Add the "when did Shinkansen
+    start?" question to the eval and re-run before deciding.
 
 ## In progress
 - Compressed plan for the deadline (agreed 2026-11-06), one row at a time, commit + tag after each:
-  1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. ~~Stages 5-6~~ built, live run pending a key.
+  1. ~~Stage 3b~~ done. 2. ~~Stage 4~~ done. 3. ~~Stages 5-6~~ built; Ollama live, OpenAI pending credits.
   4. ~~Stage 8~~ done (UI + README clean-clone check). 5. Docs: THREAT, FAILURE, DATA
   history section, HANDOVER. 6. User: DEFENSE.md, slides.
 - Cut for time: table fetching (D-002 revisit), overlap experiments, LLM-judge faithfulness.

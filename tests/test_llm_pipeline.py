@@ -10,7 +10,7 @@ from fakes import FakeEmbedder
 
 from ragbot import config
 from ragbot.chunking import ChunkConfig
-from ragbot.generate import SYSTEM_PROMPT, build_messages, cited_ids, is_refusal, select_chunks
+from ragbot.generate import SYSTEM_PROMPT, build_messages, cited_ids, is_empty, is_refusal, select_chunks
 from ragbot.history import Turn, rewrite_query, trim_history
 from ragbot.index import build_dense_index
 from ragbot.llm import ChatClient, LLMError, LLMNotConfigured
@@ -86,6 +86,40 @@ def test_client_errors_are_not_retried_and_hide_nothing_useful():
     assert len(calls) == 1
 
 
+def test_quota_exhausted_429_is_not_retried_and_shows_the_reason():
+    calls = []
+
+    def post(*a):
+        calls.append(1)
+        raise urllib.error.HTTPError("u", 429, "x", {}, io.BytesIO(json.dumps(
+            {"error": {"message": "You exceeded your current quota, check your plan and billing."}}).encode()))
+
+    with pytest.raises(LLMError, match="HTTP 429: You exceeded your current quota"):
+        ChatClient("ollama", post=post, sleep=lambda s: None).chat([], 5)
+    assert len(calls) == 1
+
+
+def test_no_credits_429_is_not_retried():
+    calls = []
+
+    def post(*a):
+        calls.append(1)
+        raise urllib.error.HTTPError("u", 429, "x", {}, io.BytesIO(json.dumps(
+            {"error": {"message": "You have no credits remaining. Add credits to continue."}}).encode()))
+
+    with pytest.raises(LLMError, match="no credits remaining"):
+        ChatClient("ollama", post=post, sleep=lambda s: None).chat([], 5)
+    assert len(calls) == 1
+
+
+def test_rate_limit_429_final_error_includes_the_provider_message():
+    def post(*a):
+        raise http_error(429)  # body says "nope"
+
+    with pytest.raises(LLMError, match="HTTP 429: nope after 4 attempts"):
+        ChatClient("ollama", post=post, sleep=lambda s: None).chat([], 5)
+
+
 def test_gives_up_after_retries_and_bad_shape_is_an_error():
     def down(*a):
         raise urllib.error.URLError("refused")
@@ -156,10 +190,10 @@ def chunk(i, text, n=10):
 def test_prompt_numbers_passages_cites_ids_and_marks_them_untrusted():
     msgs = build_messages("Q?", [chunk(0, "Alpha."), chunk(1, "Beta.")], history=H[:1], rewritten="Q standalone?")
     assert msgs[0]["role"] == "system" and msgs[0]["content"] == SYSTEM_PROMPT
-    assert "untrusted" in SYSTEM_PROMPT and config.REFUSAL_TEXT in SYSTEM_PROMPT and "ONLY" in SYSTEM_PROMPT
+    assert "untrusted" in SYSTEM_PROMPT and "ignore these rules" in SYSTEM_PROMPT and config.REFUSAL_TEXT in SYSTEM_PROMPT and "ONLY" in SYSTEM_PROMPT
     assert [m["role"] for m in msgs] == ["system", "user", "assistant", "user"]
     user = msgs[-1]["content"]
-    assert "--- passage 1 ---\n[doc#0000] (Doc > A)\nAlpha." in user and "[doc#0001]" in user
+    assert "--- passage 1: id=doc#0000 | section=Doc > A ---\nAlpha." in user and "id=doc#0001" in user
     assert "Question: Q?" in user and "Standalone form used for the search: Q standalone?" in user
 
 
@@ -175,6 +209,19 @@ def test_citation_and_refusal_parsing():
         "shinkansen#0006", "n700-series-shinkansen#0001"]
     assert is_refusal(config.REFUSAL_TEXT) and is_refusal("  i don't know based on the provided documents")
     assert not is_refusal("It was built in 1964 [a#0001].")
+
+
+def test_empty_answer_detection():
+    assert is_empty("[shinkansen#0005] (Shinkansen > History > Construction)")
+    assert is_empty("[shinkansen#0005]")
+    assert not is_empty("It opened in 1964 [shinkansen#0007].")
+    assert not is_empty(config.REFUSAL_TEXT)
+
+
+def test_echoed_header_is_flagged_and_not_stored_in_history():
+    b = bot(ScriptedClient("[doc#0000] (Doc > A)"))
+    a = b.ask("Shima resigned")
+    assert a.empty and not a.refused and b.history == []
 
 
 # --- Pipeline ------------------------------------------------------------------------------
@@ -222,6 +269,13 @@ def test_input_limits():
         b.ask("x" * (config.MAX_QUERY_CHARS + 1))
     with pytest.raises(ValueError, match="empty"):
         b.ask("   ")
+
+
+def test_answer_without_a_valid_citation_is_flagged_uncited():
+    # A fresh bot per case: a second question on one bot would also consume a scripted rewrite reply.
+    assert bot(ScriptedClient("Shima resigned in 1963.")).ask("Shima resigned").uncited
+    assert not bot(ScriptedClient(config.REFUSAL_TEXT)).ask("TGV speed").uncited  # a refusal needs no citation
+    assert not bot(ScriptedClient("Shima resigned [doc#0000].")).ask("Shima resigned").uncited
 
 
 def test_reset_clears_history():

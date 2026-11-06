@@ -63,6 +63,15 @@ RAGBOT_LLM_BASE_URL=http://localhost:8000/v1 RAGBOT_LLM_MODEL=my-model RAGBOT_LL
 
 Presets (openai, ollama, groq, openrouter) are in `src/ragbot/config.py`.
 
+## Troubleshooting
+
+- `Index not usable ... stale`: run `uv run python scripts/build_index.py`.
+- `HTTP 429 ... no credits` / `quota`: the key is valid but the account has no API credit; add billing or use another provider.
+- `HTTP 401`: wrong key. `HTTP 404`: the model name is not available; set `RAGBOT_LLM_MODEL`.
+- Ollama `Connection refused`: start it (`ollama serve`; if it says the address is in use, it is already running).
+- The UI says "No LLM is configured": the key must be exported in the same terminal that starts the UI.
+- Small local models may return a citation only or ignore the rules; the CLI/UI show a warning. Use a stronger model.
+
 ## Layout
 
 | Path | Purpose |

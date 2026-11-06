@@ -65,4 +65,4 @@ prior user/assistant messages in the answer prompt.
 ## Answer (`pipeline.Answer`)
 `text`, `query` (what was searched), `rewrite_note`, `chunks` (records put in the prompt),
 `hits`, `cited` (chunk ids cited and present in the prompt), `invalid_citations` (cited but not
-in the prompt), `refused`, `used_llm`, `error`.
+in the prompt), `refused`, `empty` (only a citation/header came back), `uncited` (a real answer with no citation that matches the context), `used_llm`, `error`.

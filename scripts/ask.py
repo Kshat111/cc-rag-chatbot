@@ -22,6 +22,10 @@ def show(ans):
     print(f"\n{ans.text}")
     if ans.refused:
         print("  [refusal]")
+    if ans.empty:
+        print("  [WARNING: the model returned no real answer (only a citation or header); try a stronger model]")
+    if ans.uncited:
+        print("  [WARNING: no valid citation in this answer; treat it as unverified]")
     if ans.invalid_citations:
         print(f"  [WARNING: cited ids not in the context: {ans.invalid_citations}]")
     print("\nSources:")

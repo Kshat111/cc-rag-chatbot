@@ -385,9 +385,13 @@ One entry per decision. Newest at the bottom.
   only; nothing in config.py holds a secret.
 - **Trade-off:** No streaming, no native Anthropic/Gemini protocol (use their OpenAI-compatible
   endpoints, or OpenRouter). Model names in presets can go stale and are not validated; a wrong
-  name shows up as an HTTP 404 with the provider's message. Not tested against a live
-  endpoint in the build environment (no key, no Ollama): the HTTP layer is tested with a
-  fake transport only.
+  name shows up as an HTTP 404 with the provider's message.
+  **Live status (2026-11-06):** Ollama (`llama3.2`) tested live by the user and answers;
+  OpenAI returned `HTTP 429 "You have no credits remaining"` (valid key, no billing), so OpenAI
+  answers are **not yet verified live**. Found while testing: a 429 can mean "slow down" (retry)
+  or "out of funds" (never clears), and the first version hid the provider's message and retried
+  anyway. Now the provider's error text is always included, and a 429 whose text contains
+  quota / credit / billing / insufficient fails at once (tests cover both).
 - **Revisit if:** streaming or tool calling is needed, a provider deviates from the
   OpenAI schema, or the retry logic grows beyond what 60 lines can hold (then adopt the SDK).
 - **Model:** Claude Sonnet 5.5 (claude-sonnet-5-5) (proposed), human (approved)
@@ -443,6 +447,28 @@ One entry per decision. Newest at the bottom.
   produces an answer attempt, and the model must refuse on its own. The 3000-token budget is
   generous for 5 chunks (max 5 × 512 = 2560) and only starts to matter if TOP_K is raised or a
   small-context local model is used (then lower it).
+- **Changes after the first live run (2026-11-06, Ollama llama3.2):** the model answered
+  "when did Shinkansen start?" with only the passage header `[shinkansen#0005] (Shinkansen > History > Construction)`
+  (FAILURE F15). Fixes: (1) the passage id and section moved into the delimiter line
+  (`--- passage 1: id=... | section=... ---`) so the first text line is not an answer-shaped
+  header; (2) rule 6 says to answer in complete sentences and never reply with only a citation
+  (the refusal rule is unchanged, 7 rules now); (3) `generate.is_empty` flags an answer with fewer
+  than 3 words left after removing `[...]` and `(...)`; the pipeline sets `Answer.empty`, shows a
+  warning (CLI, UI) and does not store the turn in history. Re-run of the same question after the
+  fix: "The Shinkansen debuted by JNR in 1964 [japanese-national-railways#0002]." (grounded, valid
+  citation, no exact date because the date chunk was not retrieved, F16). One question, one
+  model, temperature 0: an anecdote, not a measurement.
+  Further live probes (same model): 3/3 out-of-corpus questions refused; two answers whose numbers
+  were nearby but not about the asked subject (F17 N700S, F19 W7) and one with a non-existent id (F17).
+  **Full live run, Ollama llama3.2, 2026-11-06 (14 questions, run by Claude, answers checked against the chunks):**
+  correct and grounded: Tokaido opening date, chief engineer (Shima), resignation reason (3-turn follow-up with
+  correct rewrites: "...chief engineer of the Tokaido Shinkansen?", "...Hideo Shima's resignation..."), Hokkaido
+  2016, TGV refusal, Indian-train refusal. Failed: W7 speed (line limit attributed to the train, F19),
+  "when did Shinkansen start?" (date from memory, F20), injected "ignore your rules" question (F21), Chuo opening
+  (merged sections, F22). Added: `Answer.uncited` warning, and a sentence in rule 5 covering user-side
+  instructions (it did not change the injected answer on this model).
+  Conclusion for the presentation: the prompt controls refusal and id validity well, but not whether the
+  cited chunk supports the sentence; that needs a faithfulness check (Stage 7), which is not built.
 - **Revisit if:** a real run shows outside-knowledge answers or weak-retrieval answers that a
   threshold would have stopped (record it in FAILURE.md); a local model has a context under ~4k
   tokens; or answers need to be longer than a few sentences.

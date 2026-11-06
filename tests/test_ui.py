@@ -8,7 +8,7 @@ from ragbot.ui import build_app, format_sources, format_status
 
 def ans(**kw):
     base = dict(text="t", query="q", rewrite_note="", chunks=[], hits=[], cited=[], invalid_citations=[],
-                refused=False, used_llm=True)
+                refused=False, empty=False, uncited=False, used_llm=True)
     base.update(kw)
     return SimpleNamespace(**base)
 
